@@ -1,7 +1,12 @@
-# Compiler Project
+# Compiler for Draft-Script (DS) Programming Language
 
-This is the project of ZJU "Compiler Principles" 2021.
-
+This is the repo of our course design for *Compiler Principles*, spring-summer semester 2021, ZJU.
 
 **Group members:**
-Wang Ruixin, Luo Ziyi, Pan Chengyuan
+
+Chengyuan Pan
+
+Ruixin Wang
+
+Ziyi Luo
+
