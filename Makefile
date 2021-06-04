@@ -7,12 +7,18 @@ CPPFLAGS = `$(LLVMCONFIG) --cxxflags`
 LDFLAGS = `$(LLVMCONFIG) --ldflags`
 LIBS = `$(LLVMCONFIG) --libs`
 
+parser.cpp: parser.y
+	bison -d -o $@ $<
+
+lexer.cpp: lexer.l
+	flex -o $@ $<
+
 %.o: %.cpp
 	g++ -c $(CPPFLAGS) -o $@ $<
 
 compiler: $(OBJS)
-	g++ $(CPPFLAGS) -o $@ $(OBJS) $(LIBS) $(LDFLAGS)
+	g++ $(CPPFLAGS) $(OBJS) $(LIBS) $(LDFLAGS) -o $@
 
 .PHONY: clean
 clean:
-	rm $(OBJS)
+	rm -f parser.cpp lexer.cpp *.o compiler

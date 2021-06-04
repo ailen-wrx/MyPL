@@ -1,11 +1,5 @@
-# CMake
-cmake-build-debug/
-
-# vscode
 .vscode/*
 !.vscode/c_cpp_properties.json
 
 *.o
-*.output
-.DS_Store
-*.exe
+compiler

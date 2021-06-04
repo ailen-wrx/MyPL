@@ -4,45 +4,28 @@ This is the repo of our course design for *Compiler Principles*, spring-summer s
 
 ##  Environment
 
- - Ubuntu 20.04 LTS (or lower version)
- - cmake 3.16.3
+ - Ubuntu 20.04 LTS x86_64
  - flex 2.6.4
  - bison 3.5.1
- - llvm 6.0.0 (or higher version)
+ - llvm 12.0
 
 
 
 ### Configuration
 
- - sudo apt-get install flex bison
+ 1. `sudo apt install flex bison`
 
- - Download llvm src: https://releases.llvm.org/6.0.0/llvm-6.0.0.src.tar.xz
+ 2. Download llvm pre-build from: 
+ https://github.com/llvm/llvm-project/releases/download/llvmorg-12.0.0/clang+llvm-12.0.0-x86_64-linux-gnu-ubuntu-20.04.tar.xz
 
- - Extract folder as `llvm-6.0.0`
+ 3. Extract folder: `tar xf clang+llvm-12.0.0-x86_64-linux-gnu-ubuntu-20.04.tar.xz `
 
- - ```bash
-   cd .../llvm-6.0.0
-   mkdir build
-   cd build
-   cmake .. -DLLVM_TARGETS_TO_BUILD=X86 -DCMAKE_BUILD_TYPE=Debug
-   make -jN
-   make install
-   ```
+ 4. Change diretory: `sudo mv clang+llvm-12.0.0-x86_64-linux-gnu-ubuntu-20.04 /opt/llvm`
 
- - ```bash
-   # Expand swap space (if needed)
-   sudo su
-   mkdir /swap
-   cd /swap
-   sudo dd if=/dev/zero of=swapfile bs=1024 count=20000000
-   sudo mkswap -f swapfile
-   sudo swapon swapfile
-   ```
 
-   
+## Compilation and Test
 
- 
-
+Simply run `make` to compile the project.
 
 
 ## Group members
