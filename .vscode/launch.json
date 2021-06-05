@@ -10,7 +10,10 @@
             "MIMode": "gdb",
             "cwd": "${workspaceFolder}",
             "internalConsoleOptions": "neverOpen",
-            "preLaunchTask": "make"
+            "preLaunchTask": "make",
+            "args": [
+                "<test.input"
+            ]
         }
     ]
 }
