@@ -2,7 +2,7 @@
 
 Value *NVariable::codeGen(CodeGenContext &context)
 {
-    cout << "var" << endl;
+    cout << "var:" << name << endl;
     Value *V = context.vars[name];
     if (!V)
     {
@@ -14,7 +14,7 @@ Value *NVariable::codeGen(CodeGenContext &context)
 
 Value *NDouble::codeGen(CodeGenContext &context)
 {
-    cout << "double" << endl;
+    cout << "double" << value << endl;
     return ConstantFP::get(Type::getDoubleTy(context.llvmcontext), value);
 }
 
@@ -26,26 +26,28 @@ Value *NBinOp::codeGen(CodeGenContext &context)
         cout << "enter" << endl;
         NVariable *l = static_cast<NVariable *>(left);
         Value *r = right->codeGen(context);
-        Value *variable = context.vars[l->name];
-        context.builder.CreateStore(r, variable);
+        context.vars[l->name] = r;
+        // context.builder.CreateStore(r, context.vars[l->name]);
 
-        cout << l->name << " assigned " << (static_cast<ConstantInt *>(r)->getValue()).getLimitedValue();
+        cout << l->name << " assigned " << (((ConstantFP *)r)->getValue()).convertToDouble() << endl;
 
         return r;
     }
 
     cout << "out" << endl;
     Value *L = left->codeGen(context);
+    cout << " left is " << (((ConstantFP *)L)->getValue()).convertToDouble() << endl;
     Value *R = right->codeGen(context);
+    cout << " right is " << (((ConstantFP *)R)->getValue()).convertToDouble() << endl;
     switch (op)
     {
     case '+':
-        return context.builder.CreateAdd(L, R, "addtmp");
+        return context.builder.CreateFAdd(L, R, "addtmp");
     case '-':
-        return context.builder.CreateSub(L, R, "subtmp");
+        return context.builder.CreateFSub(L, R, "subtmp");
     case '*':
-        return context.builder.CreateMul(L, R, "multmp");
+        return context.builder.CreateFMul(L, R, "multmp");
     case '/':
-        return context.builder.CreateSDiv(L, R, "divtmp");
+        return context.builder.CreateFDiv(L, R, "divtmp");
     }
 }
