@@ -1,9 +1,13 @@
-#include <llvm/IR/Value.h>
-#include <iostream>
+#include "codeGen.h"
+#include "parser.hpp"
 
-using namespace std;
+extern Node *pro;
+
+CodeGenContext context;
 
 int main()
 {
-    cout << "Hello world" << endl;
+    yyparse();
+    cout << "Succeed parsed" << endl;
+    pro->codeGen(context);
 }

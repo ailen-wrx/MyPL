@@ -1,35 +1,21 @@
 %{
-    #include <string>
-    #include "node.h"
-    #include "parser.hpp"
-    #define SAVE_TOKEN yylval.string = new std::string(yytext, yyleng)
-    #define TOKEN(t) (yylval.token = t)
-    extern "C" int yywrap() { }
+#include "codeGen.h"
+#include  <iostream>
+#include "parser.hpp"
+
+using namespace std;
 %}
 
+%option noyywrap
+
 %%
-
-[ \t\n]                 ;
-[a-zA-Z_][a-zA-Z0-9_]*  SAVE_TOKEN; return TIDENTIFIER;
-[0-9]+.[0-9]*           SAVE_TOKEN; return TDOUBLE;
-[0-9]+                  SAVE_TOKEN; return TINTEGER;
-"="                     return TOKEN(TEQUAL);
-"=="                    return TOKEN(TCEQ);
-"!="                    return TOKEN(TCNE);
-"<"                     return TOKEN(TCLT);
-"<="                    return TOKEN(TCLE);
-">"                     return TOKEN(TCGT);
-">="                    return TOKEN(TCGE);
-"("                     return TOKEN(TLPAREN);
-")"                     return TOKEN(TRPAREN);
-"{"                     return TOKEN(TLBRACE);
-"}"                     return TOKEN(TRBRACE);
-"."                     return TOKEN(TDOT);
-","                     return TOKEN(TCOMMA);
-"+"                     return TOKEN(TPLUS);
-"-"                     return TOKEN(TMINUS);
-"*"                     return TOKEN(TMUL);
-"/"                     return TOKEN(TDIV);
-.                       printf("Unknown token!n"); yyterminate();
-
+[a-zA-Z_][a-zA-Z0-9_]*  {yylval.string = new string(yytext); return TVAR; }
+[0-9]+\.[0-9]*          {sscanf(yytext,"%lf",&(yylval.number)); return TNUMBER; }
+[0-9]+                  {sscanf(yytext,"%lf",&(yylval.number)); return TNUMBER; }
+"+"                     {return TPLUS; }
+"-"                     {return TMINUS; }
+"*"                     {return TMUL; }
+"/"                     {return TDIV; }
+"="                     {return TEQUAL; }
+.                        ;
 %%
