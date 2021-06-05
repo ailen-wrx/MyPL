@@ -15,4 +15,4 @@ compiler: $(OBJS)
 
 .PHONY: clean
 clean:
-	rm $(OBJS)
+	rm compiler $(OBJS)
