@@ -6,3 +6,5 @@
 
 *.o
 compiler
+lexer.cpp
+parser.cpp
