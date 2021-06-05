@@ -1,0 +1,16 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "(gdb)make",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/compiler",
+            "miDebuggerPath": "/usr/bin/gdb",
+            "MIMode": "gdb",
+            "cwd": "${workspaceFolder}",
+            "internalConsoleOptions": "neverOpen",
+            "preLaunchTask": "make"
+        }
+    ]
+}
