@@ -9,3 +9,5 @@ cmake-build-debug/
 *.output
 .DS_Store
 *.exe
+
+compiler
