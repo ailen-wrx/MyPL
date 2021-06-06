@@ -15,6 +15,7 @@ using namespace std;
 #define TYPE_ARR 4
 #define TYPE_BINOP 5
 #define TYPE_CALL 6
+#define TYPE_ARRIDX 7
 
 class Node
 {
@@ -79,6 +80,20 @@ public:
             ret += i->toString();
             return ret;
         }
+    }
+};
+
+class NArrayIndex : public NExp
+{
+public:
+    string arrName;
+    NExp *index;
+
+    NArrayIndex(string name, NExp *idx) : NExp(TYPE_ARRIDX), arrName(name), index(idx) {}
+    Value *codeGen(CodeGenContext &context) override;
+    string toString() override
+    {
+        return arrName + " [ " + index->toString() + " ] ";
     }
 };
 

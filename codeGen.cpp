@@ -2,32 +2,58 @@
 
 Value *NVariable::codeGen(CodeGenContext &context)
 {
-    cout << "var:" << name << endl;
+    // cout << "var:" << name << endl;
     Value *V = context.vars[name]->codeGen(context);
     if (!V)
     {
-        cout << "Unknown variable name";
+        cout << "Unknown variable name" << endl;
+        ;
     }
     return V;
 }
 
 Value *NNum::codeGen(CodeGenContext &context)
 {
-    cout << "double" << value << endl;
+    // cout << "double" << value << endl;
     return ConstantFP::get(Type::getDoubleTy(context.llvmcontext), value);
+}
+
+Value *NStr::codeGen(CodeGenContext &context)
+{
+    return context.builder.CreateGlobalString(value, "string");
+}
+
+Value *NArray::codeGen(CodeGenContext &context)
+{
+    cout << "Invalid use of array" << endl;
+    return NULL;
+}
+
+Value *NArrayIndex::codeGen(CodeGenContext &context)
+{
+    NExp *target = context.vars[arrName];
+    if (target->type != TYPE_ARR)
+    {
+        cout << "Not an array" << endl;
+        return NULL;
+    }
+    NArray *arr = static_cast<NArray *>(target);
+
+    return arr->elements[int(((ConstantFP *)index->codeGen(context))->getValue().convertToDouble())]
+        ->codeGen(context);
 }
 
 Value *NBinOp::codeGen(CodeGenContext &context)
 {
-    cout << "====" << endl;
+    // cout << "====" << endl;
     if (op == '=')
     {
-        cout << "enter" << endl;
+        // cout << "enter" << endl;
         NVariable *l = static_cast<NVariable *>(left);
         switch (right->type)
         {
         case TYPE_BINOP:
-        case TYPE_STR:
+        case TYPE_CALL:
             context.vars[l->name] =
                 new NNum(((ConstantFP *)right->codeGen(context))->getValue().convertToDouble());
             break;
@@ -44,7 +70,7 @@ Value *NBinOp::codeGen(CodeGenContext &context)
         return l->codeGen(context);
     }
 
-    cout << "out" << endl;
+    // cout << "out" << endl;
     Value *L = left->codeGen(context);
     cout << " left is " << (((ConstantFP *)L)->getValue()).convertToDouble() << endl;
     Value *R = right->codeGen(context);
