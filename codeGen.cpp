@@ -156,6 +156,8 @@ Value *NBlock::codeGen(CodeGenContext &context)
 
 Value *NIfStmt::codeGen(CodeGenContext &context)
 {
+    Log("If statement");
+    
 }
 
 Value *NWhileStmt::codeGen(CodeGenContext &context)
