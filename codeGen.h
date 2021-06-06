@@ -24,6 +24,9 @@ public:
 	Module llvmmodule;
 	map<string, NExp *> vars;
 
+	vector<BasicBlock *> block_stack;
+	vector<map<string, NExp *>> symboltable_stack;
+
 	CodeGenContext() : builder(llvmcontext), llvmmodule("module", llvmcontext) {}
 };
 
