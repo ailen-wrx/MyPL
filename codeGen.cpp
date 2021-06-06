@@ -198,10 +198,24 @@ Value *NBlock::codeGen(CodeGenContext &context)
 Value *NIfStmt::codeGen(CodeGenContext &context)
 {
     Log("If statement");
+    Value* condVal = this->cond->codeGen(context);
+    int cond = static_cast<int>((((ConstantFP *)condVal)->getValue()).convertToDouble());
+    if (cond == 0) {
+        this->el->codeGen(context);
+    } else {
+        this->then->codeGen(context);
+    }
 }
 
 Value *NWhileStmt::codeGen(CodeGenContext &context)
 {
+    Value* condVal = this->Cond->codeGen(context);
+    int cond = static_cast<int>((((ConstantFP *)condVal)->getValue()).convertToDouble());
+    while (cond != 0) {
+        this->body->codeGen(context);
+        condVal = this->Cond->codeGen(context);
+        cond = static_cast<int>((((ConstantFP *)condVal)->getValue()).convertToDouble());
+    }
 }
 
 Value *NFuncDef::codeGen(CodeGenContext &context)
