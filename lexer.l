@@ -1,5 +1,5 @@
 %{
-#include "codeGen.h"
+#include "node.h"
 #include  <iostream>
 #include "parser.hpp"
 

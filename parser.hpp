@@ -66,11 +66,12 @@ union YYSTYPE
 #line 16 "parser.y"
 
     Node* node;
+	NExp* exp;
 	std::string* string;
     double number;
 	int token;
 
-#line 74 "parser.hpp"
+#line 75 "parser.hpp"
 
 };
 typedef union YYSTYPE YYSTYPE;

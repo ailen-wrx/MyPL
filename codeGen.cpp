@@ -1,4 +1,5 @@
 #include "codeGen.h"
+#include "node.h"
 using namespace std;
 
 void Log(string str) 
@@ -13,16 +14,15 @@ void Log(string str1, double str2)
 Value *NVariable::codeGen(CodeGenContext &context)
 {
     cout << "var:" << name << endl;
-    Value *V = context.vars[name];
+    Value *V = context.vars[name]->codeGen(context);
     if (!V)
     {
         cout << "Unknown variable name";
-        V = context.vars[name] = (new NDouble(0))->codeGen(context);
     }
     return V;
 }
 
-Value *NDouble::codeGen(CodeGenContext &context)
+Value *NNum::codeGen(CodeGenContext &context)
 {
     Log("Double: ", value);
     return ConstantFP::get(Type::getDoubleTy(context.llvmcontext), value);
@@ -35,25 +35,24 @@ Value *NBinOp::codeGen(CodeGenContext &context)
     {
         Log("enter");
         NVariable *l = static_cast<NVariable *>(left);
-        Value *lC = lC = l->codeGen(context);
-        Value *r = r = right->codeGen(context);
+        switch (right->type)
+        {
+        case TYPE_BINOP:
+        case TYPE_STR:
+            context.vars[l->name] =
+                new NNum(((ConstantFP *)right->codeGen(context))->getValue().convertToDouble());
+            break;
+        case TYPE_VAR:
+            context.vars[l->name] = context.vars[((NVariable *)right)->name];
+            break;
 
-        /* Declare variable according to the type of r */
-        Type* type = llvm::Type::getFloatTy(context.llvmcontext);
-        context.builder.CreateLoad(lC, false, "");
+        default:
+            context.vars[l->name] = right;
+        }
 
-        
-        Value* initial = nullptr;
-        Value* inst = context.builder.CreateAlloca(type);
-        context.vars.insert(pair<string, Value *> (l->name, inst));
+        cout << l->name << " assigned " << context.vars[l->name]->toString() << endl;
 
-        /* dst -> 0x00: No variable declared yet. */
-        Value *dst = context.vars.find(l->name)->second;
-        // context.vars[l->name] = r;
-        context.builder.CreateStore(r, dst);
-        Log("Assigned: ", (((ConstantFP *)r)->getValue()).convertToDouble());
-
-        return r;
+        return l->codeGen(context);
     }
 
     Log("out");

@@ -1,5 +1,5 @@
 %{
-#include "codeGen.h"
+#include "node.h"
 #include <memory>
 
 Node* pro;
@@ -15,6 +15,7 @@ extern int yylex();
 %union
 {
     Node* node;
+	NExp* exp;
 	std::string* string;
     double number;
 	int token;
@@ -23,7 +24,8 @@ extern int yylex();
 %token <string> TVAR
 %token <token> TEQUAL TPLUS TMINUS TMUL TDIV
 %token <number> TNUMBER
-%type <node> program stmt rstmt
+%type <node> program
+%type <exp> stmt rstmt
 
 %left TEQUAL
 %left TPLUS TMINUS
@@ -40,5 +42,5 @@ rstmt: rstmt TPLUS rstmt { $$ = new NBinOp('+',$1,$3); }
 | rstmt TMINUS rstmt { $$ = new NBinOp('-',$1,$3);}
 | rstmt TMUL rstmt { $$ = new NBinOp('*',$1,$3); }
 | rstmt TDIV rstmt { $$ = new NBinOp('/',$1,$3); }
-| TNUMBER          { $$ = new NDouble($1); }
+| TNUMBER          { $$ = new NNum($1); }
 %%
