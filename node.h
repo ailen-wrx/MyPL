@@ -5,6 +5,7 @@
 #include <vector>
 #include <string>
 #include "codeGen.h"
+#include "parser.hpp"
 
 using namespace llvm;
 using namespace std;
@@ -113,14 +114,14 @@ public:
 class NBinOp : public NExp
 {
 public:
-    char op;
+    enum yytokentype op;
     NExp *left, *right;
-    NBinOp(char c, NExp *l, NExp *r) : NExp(TYPE_BINOP), op(c), left(l), right(r) {}
+    NBinOp(enum yytokentype c, NExp *l, NExp *r) : NExp(TYPE_BINOP), op(c), left(l), right(r) {}
 
     Value *codeGen(CodeGenContext &context) override;
     string toString() override
     {
-        return left->toString() + " " + op + " " + right->toString();
+        return left->toString() + " " + to_string(op) + " " + right->toString();
     };
 };
 

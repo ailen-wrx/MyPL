@@ -95,7 +95,7 @@ void NArrayIndex::modify(CodeGenContext &context, NExp *newVal)
 Value *NBinOp::codeGen(CodeGenContext &context)
 {
     Log("====");
-    if (op == '=')
+    if (op == TEQUAL)
     {
         Log("enter");
         NExp *newVal;
@@ -125,6 +125,9 @@ Value *NBinOp::codeGen(CodeGenContext &context)
         case TYPE_ARRIDX:
             NArrayIndex *larridx = static_cast<NArrayIndex *>(left);
             larridx->modify(context, newVal);
+            break;
+        default:
+            cout << "Invalid assignment" << endl;
         }
     }
 
@@ -135,14 +138,26 @@ Value *NBinOp::codeGen(CodeGenContext &context)
     Log("Right", (((ConstantFP *)R)->getValue()).convertToDouble());
     switch (op)
     {
-    case '+':
+    case TPLUS:
         return context.builder.CreateFAdd(L, R, "addtmp");
-    case '-':
+    case TMINUS:
         return context.builder.CreateFSub(L, R, "subtmp");
-    case '*':
+    case TMUL:
         return context.builder.CreateFMul(L, R, "multmp");
-    case '/':
+    case TDIV:
         return context.builder.CreateFDiv(L, R, "divtmp");
+    case TCLT:
+        return context.builder.CreateFCmpULT(L, R, "cmpftmp");
+    case TCLE:
+        return context.builder.CreateFCmpOLE(L, R, "cmpftmp");
+    case TCGE:
+        return context.builder.CreateFCmpOGE(L, R, "cmpftmp");
+    case TCGT:
+        return context.builder.CreateFCmpOGT(L, R, "cmpftmp");
+    case TCEQ:
+        return context.builder.CreateFCmpOEQ(L, R, "cmpftmp");
+    case TCNE:
+        return context.builder.CreateFCmpONE(L, R, "cmpftmp");
     }
 }
 
@@ -154,6 +169,19 @@ Value *NCallFunc::codeGen(CodeGenContext &context)
         cout << "function unmatched." << endl;
         return NULL;
     }
+
+    vars_reserved = context.vars;
+    context.vars.clear();
+
+    int idx = 0;
+    for (auto i : this->args)
+        context.vars[f->args[idx]] = i;
+
+    Value *ret = f->body->codeGen(context);
+
+    context.vars = vars_reserved;
+
+    return ret;
 }
 
 Value *NBlock::codeGen(CodeGenContext &context)
