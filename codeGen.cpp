@@ -44,7 +44,7 @@ Value *NArray::codeGen(CodeGenContext &context)
     return NULL;
 }
 
-Value *NArrayIndex::codeGen(CodeGenContext &context)
+NExp *NArrayIndex::getTarget(CodeGenContext &context)
 {
     NExp *target = context.vars[arrName];
     if (target->type != TYPE_ARR)
@@ -54,8 +54,13 @@ Value *NArrayIndex::codeGen(CodeGenContext &context)
     }
     NArray *arr = static_cast<NArray *>(target);
 
-    return arr->elements[int(((ConstantFP *)index->codeGen(context))->getValue().convertToDouble())]
-        ->codeGen(context);
+    int intIndex = int(((ConstantFP *)index->codeGen(context))->getValue().convertToDouble());
+    return arr->elements[intIndex];
+}
+
+Value *NArrayIndex::codeGen(CodeGenContext &context)
+{
+    return getTarget(context)->codeGen(context);
 }
 
 Value *NBinOp::codeGen(CodeGenContext &context)
@@ -64,23 +69,33 @@ Value *NBinOp::codeGen(CodeGenContext &context)
     if (op == '=')
     {
         Log("enter");
-        NVariable *l = static_cast<NVariable *>(left);
-        switch (right->type)
+        if (left->type == TYPE_VAR)
         {
-        case TYPE_BINOP:
-        case TYPE_CALL:
-            context.vars[l->name] =
-                new NNum(((ConstantFP *)right->codeGen(context))->getValue().convertToDouble());
-            break;
-        case TYPE_VAR:
-            context.vars[l->name] = context.vars[((NVariable *)right)->name];
-            break;
+            NVariable *l = static_cast<NVariable *>(left);
+            switch (right->type)
+            {
+            case TYPE_BINOP:
+            case TYPE_CALL:
+                context.vars[l->name] =
+                    new NNum(((ConstantFP *)right->codeGen(context))->getValue().convertToDouble());
+                break;
+            case TYPE_ARRIDX:
+                NArrayIndex *r = static_cast<NArrayIndex *>(right);
+                context.vars[l->name] = r->getTarget(context);
+                break;
+            case TYPE_VAR:
+                context.vars[l->name] = context.vars[((NVariable *)right)->name];
+                break;
 
-        default:
-            context.vars[l->name] = right;
+            default:
+                context.vars[l->name] = right;
+            }
         }
+        else if (left->type = TYPE_ARRIDX)
+        {
+                }
 
-        cout << l->name << " assigned " << context.vars[l->name]->toString() << endl;
+        cout << left->toString() << " assigned " << context.vars[l->name]->toString() << endl;
 
         return l->codeGen(context);
     }
