@@ -3,7 +3,7 @@
 
 
 
-int qsort(double *s,int start ,int end)
+int qusort(double *s,int start ,int end)
 {
 
     int  i,j;    
@@ -29,14 +29,14 @@ int qsort(double *s,int start ,int end)
     }
     s[i]=s[0];    
     if (start<i)
-        qsort(s,start,j-1);    
+        qusort(s,start,j-1);    
     if (i<end)
-        qsort(s,j+1,end);
+        qusort(s,j+1,end);
     return 0;
 }
 
 
-int main
+int main()
 {
     int n ,i ;
     double*s ;
