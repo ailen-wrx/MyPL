@@ -2,7 +2,7 @@
 #include "node.h"
 #include <memory>
 
-Node* pro;
+Node* programBlock;
 
 void yyerror(const char* s)
 {
@@ -21,10 +21,14 @@ extern int yylex();
 	int token;
 }
 
-%token <string> TVAR
-%token <token> TEQUAL TPLUS TMINUS TMUL TDIV
+%token <string> TVAR TSTRING
+%token <token> TEQUAL TPLUS TMINUS TMUL TDIV TMOD
+%token <token> TCEQ TCNE TCLT TCLE TCGT TCGE 
+%token <token> TIF TELSE TFOR TRETURN
+%token <token> TLPAREN TRPAREN TLBRACE TRBRACE TLBRACKET TRBRACKET TCOMMA
 %token <number> TNUMBER
-%type <node> program
+
+c <node> program
 %type <exp> stmt rstmt
 
 %left TEQUAL
@@ -34,7 +38,7 @@ extern int yylex();
 %start program
 
 %%
-program: stmt {pro = $1;}
+program: stmt {programBlock = $1;}
 
 stmt: TVAR TEQUAL rstmt { $$ = new NBinOp('=',new NVariable(*$1),$3);}
 

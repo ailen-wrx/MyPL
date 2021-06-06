@@ -1,7 +1,7 @@
 #include "node.h"
 #include "parser.hpp"
 
-extern Node *pro;
+extern Node *programBlock;
 
 
 
@@ -20,5 +20,5 @@ int main()
 
 
 
-    pro->codeGen(context);
+    programBlock->codeGen(context);
 }
