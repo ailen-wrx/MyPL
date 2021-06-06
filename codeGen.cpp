@@ -1,18 +1,17 @@
-#include "codeGen.h"
+#include "node.h"
 
 Value *NVariable::codeGen(CodeGenContext &context)
 {
     cout << "var:" << name << endl;
-    Value *V = context.vars[name];
+    Value *V = context.vars[name]->codeGen(context);
     if (!V)
     {
         cout << "Unknown variable name";
-        V = context.vars[name] = (new NDouble(0))->codeGen(context);
     }
     return V;
 }
 
-Value *NDouble::codeGen(CodeGenContext &context)
+Value *NNum::codeGen(CodeGenContext &context)
 {
     cout << "double" << value << endl;
     return ConstantFP::get(Type::getDoubleTy(context.llvmcontext), value);
@@ -25,13 +24,24 @@ Value *NBinOp::codeGen(CodeGenContext &context)
     {
         cout << "enter" << endl;
         NVariable *l = static_cast<NVariable *>(left);
-        Value *r = right->codeGen(context);
-        context.vars[l->name] = r;
-        // context.builder.CreateStore(r, context.vars[l->name]);
+        switch (right->type)
+        {
+        case TYPE_BINOP:
+        case TYPE_STR:
+            context.vars[l->name] =
+                new NNum(((ConstantFP *)right->codeGen(context))->getValue().convertToDouble());
+            break;
+        case TYPE_VAR:
+            context.vars[l->name] = context.vars[((NVariable *)right)->name];
+            break;
 
-        cout << l->name << " assigned " << (((ConstantFP *)r)->getValue()).convertToDouble() << endl;
+        default:
+            context.vars[l->name] = right;
+        }
 
-        return r;
+        cout << l->name << " assigned " << context.vars[l->name]->toString() << endl;
+
+        return l->codeGen(context);
     }
 
     cout << "out" << endl;

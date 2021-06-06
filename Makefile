@@ -12,13 +12,13 @@ LIBS = `$(LLVMCONFIG) --libs`
 
 lexer.l: parser.cpp
 
-parser.cpp: parser.y
+parser.cpp: parser.y node.h codeGen.h
 	bison -d -o $@ $<
 
 lexer.cpp: lexer.l
 	flex -o $@ $<
 
-%.o: %.cpp codeGen.h
+%.o: %.cpp node.h codeGen.h
 	g++ -g -c $(CPPFLAGS) -o $@ $<
 
 compiler: $(OBJS)
