@@ -95,14 +95,15 @@ public:
 class NArrayIndex : public NExp
 {
 public:
-    string arrName;
+    NArray *array;
     NExp *index;
 
-    NArrayIndex(string name, NExp *idx) : NExp(TYPE_ARRIDX), arrName(name), index(idx) {}
+    NArrayIndex(NArray *arr, NExp *idx) : NExp(TYPE_ARRIDX), array(arr), index(idx) {}
     Value *codeGen(CodeGenContext &context) override;
+    NExp *getTarget(CodeGenContext &context);
     string toString() override
     {
-        return arrName + " [ " + index->toString() + " ] ";
+        return array->toString() + " [ " + index->toString() + " ] ";
     }
 };
 
