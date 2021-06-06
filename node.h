@@ -129,6 +129,7 @@ class NCallFunc : public NExp
 public:
     string funcName;
     vector<NExp *> args;
+    map<string, NExp *> vars_reserved;
 
     NCallFunc(string name, vector<NExp *> a) : NExp(TYPE_CALL), funcName(name), args(a) {}
 
