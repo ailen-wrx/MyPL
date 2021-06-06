@@ -103,9 +103,10 @@ public:
     NArrayIndex(string name, NExp *idx) : NExp(TYPE_ARRIDX), arrName(name), super(NULL), index(idx) {}
     Value *codeGen(CodeGenContext &context) override;
     NExp *getTarget(CodeGenContext &context);
+    void modify(CodeGenContext &context, NExp *newVal);
     string toString() override
     {
-        return super->toString() + " [ " + index->toString() + " ] ";
+        return (arrName == string("") ? super->toString() : arrName) + " [ " + index->toString() + " ] ";
     }
 };
 

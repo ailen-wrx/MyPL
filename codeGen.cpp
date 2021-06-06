@@ -46,21 +46,50 @@ Value *NArray::codeGen(CodeGenContext &context)
 
 NExp *NArrayIndex::getTarget(CodeGenContext &context)
 {
-    NExp *target = context.vars[arrName];
-    if (target->type != TYPE_ARR)
-    {
-        cout << "Not an array" << endl;
-        return NULL;
-    }
-    NArray *arr = static_cast<NArray *>(target);
-
     int intIndex = int(((ConstantFP *)index->codeGen(context))->getValue().convertToDouble());
-    return arr->elements[intIndex];
+
+    if (arrName != string(""))
+    {
+        NExp *target = context.vars[arrName];
+        if (target->type != TYPE_ARR)
+        {
+            cout << "Not an array" << endl;
+            return NULL;
+        }
+        NArray *arr = static_cast<NArray *>(target);
+
+        return arr->elements[intIndex];
+    }
+    else
+    {
+        NArray *thisArray = (NArray *)super->getTarget(context);
+        return thisArray->elements[intIndex];
+    }
 }
 
 Value *NArrayIndex::codeGen(CodeGenContext &context)
 {
     return getTarget(context)->codeGen(context);
+}
+
+void NArrayIndex::modify(CodeGenContext &context, NExp *newVal)
+{
+    int intIndex = int(((ConstantFP *)index->codeGen(context))->getValue().convertToDouble());
+    if (arrName != string(""))
+    {
+        NExp *target = context.vars[arrName];
+        if (target->type != TYPE_ARR)
+            cout << "Not an array" << endl;
+
+        NArray *arr = static_cast<NArray *>(target);
+
+        arr->elements[intIndex] = newVal;
+    }
+    else
+    {
+        NArray *thisArray = (NArray *)super->getTarget(context);
+        thisArray->elements[intIndex] = newVal;
+    }
 }
 
 Value *NBinOp::codeGen(CodeGenContext &context)
@@ -69,35 +98,34 @@ Value *NBinOp::codeGen(CodeGenContext &context)
     if (op == '=')
     {
         Log("enter");
-        if (left->type == TYPE_VAR)
+        NExp *newVal;
+        switch (right->type)
         {
-            NVariable *l = static_cast<NVariable *>(left);
-            switch (right->type)
-            {
-            case TYPE_BINOP:
-            case TYPE_CALL:
-                context.vars[l->name] =
-                    new NNum(((ConstantFP *)right->codeGen(context))->getValue().convertToDouble());
-                break;
-            case TYPE_ARRIDX:
-                NArrayIndex *r = static_cast<NArrayIndex *>(right);
-                context.vars[l->name] = r->getTarget(context);
-                break;
-            case TYPE_VAR:
-                context.vars[l->name] = context.vars[((NVariable *)right)->name];
-                break;
-
-            default:
-                context.vars[l->name] = right;
-            }
+        case TYPE_BINOP:
+        case TYPE_CALL:
+            newVal = new NNum(((ConstantFP *)right->codeGen(context))->getValue().convertToDouble());
+            break;
+        case TYPE_ARRIDX:
+            NArrayIndex *r = static_cast<NArrayIndex *>(right);
+            newVal = r->getTarget(context);
+            break;
+        case TYPE_VAR:
+            newVal = context.vars[((NVariable *)right)->name];
+            break;
+        default:
+            newVal = right;
         }
-        else if (left->type = TYPE_ARRIDX)
+        switch (left->type)
         {
-                }
-
-        cout << left->toString() << " assigned " << context.vars[l->name]->toString() << endl;
-
-        return l->codeGen(context);
+        case TYPE_VAR:
+            NVariable *lvar = static_cast<NVariable *>(left);
+            context.vars[lvar->name] = newVal;
+            cout << left->toString() << " assigned " << context.vars[lvar->name]->toString() << endl;
+            break;
+        case TYPE_ARRIDX:
+            NArrayIndex *larridx = static_cast<NArrayIndex *>(left);
+            larridx->modify(context, newVal);
+        }
     }
 
     Log("out");
