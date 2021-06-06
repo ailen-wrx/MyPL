@@ -96,16 +96,16 @@ class NArrayIndex : public NExp
 {
 public:
     string arrName;
-    NArray *array;
+    NArrayIndex *super;
     NExp *index;
 
-    NArrayIndex(NArray *arr, NExp *idx) : NExp(TYPE_ARRIDX), arrName(""), array(arr), index(idx) {}
-    NArrayIndex(string name, NExp *idx) : NExp(TYPE_ARRIDX), arrName(name), array(NULL), index(idx) {}
+    NArrayIndex(NArrayIndex *s, NExp *idx) : NExp(TYPE_ARRIDX), arrName(""), super(s), index(idx) {}
+    NArrayIndex(string name, NExp *idx) : NExp(TYPE_ARRIDX), arrName(name), super(NULL), index(idx) {}
     Value *codeGen(CodeGenContext &context) override;
     NExp *getTarget(CodeGenContext &context);
     string toString() override
     {
-        return array->toString() + " [ " + index->toString() + " ] ";
+        return super->toString() + " [ " + index->toString() + " ] ";
     }
 };
 
