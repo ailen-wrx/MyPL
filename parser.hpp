@@ -67,14 +67,17 @@ extern int yydebug;
     TELSE = 273,
     TFOR = 274,
     TRETURN = 275,
-    TLPAREN = 276,
-    TRPAREN = 277,
-    TLBRACE = 278,
-    TRBRACE = 279,
-    TLBRACKET = 280,
-    TRBRACKET = 281,
-    TCOMMA = 282,
-    TNUMBER = 283
+    TDEF = 276,
+    TWHILE = 277,
+    TLPAREN = 278,
+    TRPAREN = 279,
+    TLBRACE = 280,
+    TRBRACE = 281,
+    TLBRACKET = 282,
+    TRBRACKET = 283,
+    TCOMMA = 284,
+    TCOLON = 285,
+    TNUMBER = 286
   };
 #endif
 
@@ -85,12 +88,19 @@ union YYSTYPE
 #line 16 "parser.y"
 
     Node* node;
+	NBlock* block;
+	vector<string>* stringVec;
+	vector<NExp *>* NExpVec;
+	NArray* array;
+	NArrayIndex* index;
+	NCallFunc* call;
+	NStmt* stmt;
 	NExp* exp;
 	std::string* string;
     double number;
 	int token;
 
-#line 94 "parser.hpp"
+#line 104 "parser.hpp"
 
 };
 typedef union YYSTYPE YYSTYPE;

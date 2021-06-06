@@ -52,6 +52,7 @@ public:
     NVariable(string s) : NExp(TYPE_VAR), name(s) {}
 
     Value *codeGen(CodeGenContext &context) override;
+    NExp *getTarget(CodeGenContext &context);
     string toString() override { return name; };
 };
 

@@ -15,6 +15,7 @@ using namespace std;
 using namespace llvm;
 
 class NExp;
+class NFuncDef;
 
 class CodeGenContext
 {

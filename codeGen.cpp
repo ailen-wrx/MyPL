@@ -27,6 +27,11 @@ Value *NVariable::codeGen(CodeGenContext &context)
     return V;
 }
 
+NExp *NVariable::getTarget(CodeGenContext &context)
+{
+    return context.vars[name];
+}
+
 Value *NNum::codeGen(CodeGenContext &context)
 {
     Log("Double", value);
@@ -163,6 +168,59 @@ Value *NBinOp::codeGen(CodeGenContext &context)
 
 Value *NCallFunc::codeGen(CodeGenContext &context)
 {
+    if (funcName == "print")
+    {
+        for (NExp *i : this->args)
+        {
+            switch (i->type)
+            {
+            case TYPE_NUM:
+                cout << ((NNum *)i)->value;
+                break;
+            case TYPE_STR:
+                cout << ((NStr *)i)->value;
+                break;
+            default:
+                Value *v = i->codeGen(context);
+                cout << (((ConstantFP *)v)->getValue()).convertToDouble();
+            }
+        }
+        return NULL;
+    }
+    else if (funcName == "readn")
+    {
+        double in;
+        cin >> in;
+        NExp *target = this->args[0];
+        switch (target->type)
+        {
+        case TYPE_VAR:
+            context.vars[((NVariable *)target)->name] = new NNum(in);
+            break;
+        case TYPE_ARRIDX:
+            ((NArrayIndex *)target)->modify(context, new NNum(in));
+            break;
+        default:
+            cout << "Invalid assignment" << endl;
+        }
+    }
+    else if (funcName == "reads")
+    {
+        string in;
+        cin >> in;
+        NExp *target = this->args[0];
+        switch (target->type)
+        {
+        case TYPE_VAR:
+            context.vars[((NVariable *)target)->name] = new NStr(in);
+            break;
+        case TYPE_ARRIDX:
+            ((NArrayIndex *)target)->modify(context, new NStr(in));
+            break;
+        default:
+            cout << "Invalid assignment" << endl;
+        }
+    }
     NFuncDef *f = context.functions[funcName];
     if (f->args.size() != this->args.size())
     {
@@ -198,20 +256,24 @@ Value *NBlock::codeGen(CodeGenContext &context)
 Value *NIfStmt::codeGen(CodeGenContext &context)
 {
     Log("If statement");
-    Value* condVal = this->cond->codeGen(context);
+    Value *condVal = this->cond->codeGen(context);
     int cond = static_cast<int>((((ConstantFP *)condVal)->getValue()).convertToDouble());
-    if (cond == 0) {
+    if (cond == 0)
+    {
         this->el->codeGen(context);
-    } else {
+    }
+    else
+    {
         this->then->codeGen(context);
     }
 }
 
 Value *NWhileStmt::codeGen(CodeGenContext &context)
 {
-    Value* condVal = this->Cond->codeGen(context);
+    Value *condVal = this->Cond->codeGen(context);
     int cond = static_cast<int>((((ConstantFP *)condVal)->getValue()).convertToDouble());
-    while (cond != 0) {
+    while (cond != 0)
+    {
         this->body->codeGen(context);
         condVal = this->Cond->codeGen(context);
         cond = static_cast<int>((((ConstantFP *)condVal)->getValue()).convertToDouble());
