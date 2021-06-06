@@ -271,7 +271,7 @@ Value *NIfStmt::codeGen(CodeGenContext &context)
 {
     Log("If statement");
     Value *condVal = this->cond->codeGen(context);
-    int cond = static_cast<int>((((ConstantFP *)condVal)->getValue()).convertToDouble());
+    auto cond = ((ConstantInt *)condVal)->getLimitedValue();
     if (cond == 0)
     {
         this->el->codeGen(context);
@@ -286,14 +286,13 @@ Value *NIfStmt::codeGen(CodeGenContext &context)
 Value *NWhileStmt::codeGen(CodeGenContext &context)
 {
     Value *condVal = this->Cond->codeGen(context);
-    auto a = ((ConstantFP *)condVal)->getValue();
+    auto cond = ((ConstantInt *)condVal)->getLimitedValue();
 
-    int cond = static_cast<int>((((ConstantFP *)condVal)->getValue()).convertToDouble());
     while (cond != 0)
     {
         this->body->codeGen(context);
         condVal = this->Cond->codeGen(context);
-        cond = static_cast<int>((((ConstantFP *)condVal)->getValue()).convertToDouble());
+        cond = ((ConstantInt *)condVal)->getLimitedValue();
     }
     return NULL;
 }

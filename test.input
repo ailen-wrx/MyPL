@@ -1,3 +1,9 @@
 a=7
+if (a > 3)
+{
+    print("true")
+} else {
+    print("false")
+}
 b="test"
 print(b)
