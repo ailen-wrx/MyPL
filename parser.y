@@ -15,6 +15,8 @@ extern int yylex();
 %union
 {
     Node* node;
+	NBlock* block;
+	NStmt* stmt;
 	NExp* exp;
 	std::string* string;
     double number;
@@ -24,12 +26,13 @@ extern int yylex();
 %token <string> TVAR TSTRING
 %token <token> TEQUAL TPLUS TMINUS TMUL TDIV TMOD
 %token <token> TCEQ TCNE TCLT TCLE TCGT TCGE 
-%token <token> TIF TELSE TFOR TRETURN
-%token <token> TLPAREN TRPAREN TLBRACE TRBRACE TLBRACKET TRBRACKET TCOMMA
+%token <token> TIF TELSE TFOR TRETURN TDEF
+%token <token> TLPAREN TRPAREN TLBRACE TRBRACE TLBRACKET TRBRACKET TCOMMA TCOLON
 %token <number> TNUMBER
 
-c <node> program
-%type <exp> stmt rstmt
+%type <block> program stmts
+%type <exp> expr
+%type <stmt> stmt ifstmt whilestmt funcdef
 
 %left TEQUAL
 %left TPLUS TMINUS
@@ -38,13 +41,56 @@ c <node> program
 %start program
 
 %%
-program: stmt {programBlock = $1;}
+program: 
+	stmts {programBlock = $1;};
 
-stmt: TVAR TEQUAL rstmt { $$ = new NBinOp('=',new NVariable(*$1),$3);}
+stmts: 
+	stmt {}
+	| stmts stmt {}
+	;
 
-rstmt: rstmt TPLUS rstmt { $$ = new NBinOp('+',$1,$3); }
-| rstmt TMINUS rstmt { $$ = new NBinOp('-',$1,$3);}
-| rstmt TMUL rstmt { $$ = new NBinOp('*',$1,$3); }
-| rstmt TDIV rstmt { $$ = new NBinOp('/',$1,$3); }
-| TNUMBER          { $$ = new NNum($1); }
+stmt: 
+	expr {}
+	| TRETURN expr {}
+	| ifstmt
+	| whilestmt
+	| funcdef
+	;
+
+block: 
+	TLBRACE stmts TRBRACE {}
+	| TLBRACE TRBRACE {}
+	;
+
+funcdef: 
+	TDEF TVAR TLPAREN funcargs TRPAREN block
+		{};
+
+funcargs: 
+	{}
+	| TVAR {}
+	| funcargs TCOMMA TVAR {}
+	;
+
+ifstmt: 
+	TIF expr block {}
+	| TIF expr block TELSE block {}
+	| TIF expr block TELSE ifstmt {}
+	;
+
+whilestmt: 
+	{} 
+	;
+
+expr: 
+	TVAR TEQUAL expr {}
+	| expr TPLUS expr {}
+	| expr TMINUS expr {}
+	| expr TMUL expr {}
+	| expr TDIV expr {}
+	| TNUMBER {}
+	| TSTRING {}
+	| /* Array */
+	;
+
 %%

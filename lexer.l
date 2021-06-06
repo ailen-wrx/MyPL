@@ -15,6 +15,7 @@ using namespace std;
 "else"                  return TELSE;
 "return"                return TRETURN;
 "for"                   return TFOR;
+"def"                   return TDEF;
 [a-zA-Z_][a-zA-Z0-9_]*  {yylval.string = new string(yytext); return TVAR; }
 [0-9]+\.[0-9]*          {sscanf(yytext,"%lf",&(yylval.number)); return TNUMBER; }
 [0-9]+                  {sscanf(yytext,"%lf",&(yylval.number)); return TNUMBER; }
@@ -38,6 +39,7 @@ using namespace std;
 "["                     return TLBRACKET;
 "]"                     return TRBRACKET;
 ","                     return TCOMMA;
+":"                     return TCOLON;
 
 .                        ;
 %%
