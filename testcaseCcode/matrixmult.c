@@ -52,6 +52,9 @@ int main()
         {
             mc = ma ;
             nc = nb;
+             for(i=0;i<mc;i++)
+                for(j=0;j<nc;j++)
+                    C[i][j] = 0 ;
             for(i=0;i<mc;i++)
                 { 
                 for(j=0;j<nc;j++)
