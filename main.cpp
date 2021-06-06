@@ -6,7 +6,7 @@ extern Node *programBlock;
 int main()
 {
     yyparse();
-    cout << "Succeed parsed" << endl;
+    cout << "[LOG]  Parsing Successful" << endl;
 
     CodeGenContext context;
 

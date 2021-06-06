@@ -93,7 +93,7 @@ whilestmt:
 	;
 
 expr: 
-	TVAR TEQUAL expr { $$ = new NBinOp($2, new NVariable(*$1),$3);}
+	expr TEQUAL expr { $$ = new NBinOp($2, $1, $3);}
 	| expr TPLUS expr { $$ = new NBinOp($2, $1, $3); }
 	| expr TMINUS expr { $$ = new NBinOp($2, $1, $3);}
 	| expr TMUL expr { $$ = new NBinOp($2, $1, $3); }

@@ -1,2 +1,3 @@
-a=5+3
-print(a)
+a=7
+b="test"
+print(b)

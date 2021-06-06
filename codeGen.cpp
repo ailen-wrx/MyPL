@@ -132,7 +132,7 @@ Value *NBinOp::codeGen(CodeGenContext &context)
         {
             NVariable *lvar = static_cast<NVariable *>(left);
             context.vars[lvar->name] = newVal;
-            cout << left->toString() << " assigned " << context.vars[lvar->name]->toString() << endl;
+            cout << "[LOG]  " << left->toString() << " assigned " << context.vars[lvar->name]->toString() << endl;
             break;
         }
         case TYPE_ARRIDX:
@@ -144,6 +144,7 @@ Value *NBinOp::codeGen(CodeGenContext &context)
         default:
             cout << "Invalid assignment" << endl;
         }
+        return NULL;
     }
 
     Log("out");
@@ -196,6 +197,7 @@ Value *NCallFunc::codeGen(CodeGenContext &context)
                 cout << (((ConstantFP *)v)->getValue()).convertToDouble();
             }
         }
+        cout << endl;
         return NULL;
     }
     else if (funcName == "readn")
@@ -284,6 +286,8 @@ Value *NIfStmt::codeGen(CodeGenContext &context)
 Value *NWhileStmt::codeGen(CodeGenContext &context)
 {
     Value *condVal = this->Cond->codeGen(context);
+    auto a = ((ConstantFP *)condVal)->getValue();
+
     int cond = static_cast<int>((((ConstantFP *)condVal)->getValue()).convertToDouble());
     while (cond != 0)
     {
