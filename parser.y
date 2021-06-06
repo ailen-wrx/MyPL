@@ -23,12 +23,12 @@ extern int yylex();
 	NCallFunc* call;
 	NStmt* stmt;
 	NExp* exp;
-	std::string* string;
+	std::string* str;
     double number;
 	int token;
 }
 
-%token <string> TVAR TSTRING
+%token <str> TVAR TSTRING
 %token <token> TEQUAL TPLUS TMINUS TMUL TDIV TMOD
 %token <token> TCEQ TCNE TCLT TCLE TCGT TCGE 
 %token <token> TIF TELSE TFOR TRETURN TDEF TWHILE
@@ -79,8 +79,8 @@ funcdef:
 	;
 
 funcargs: 
-	%empty { $$=new vector<string>;}
-	| TVAR { $$=new vector<string>; $$->push_back(*$1); }
+	%empty { $$=new vector<string>();}
+	| TVAR { $$=new vector<string>(); $$->push_back(*$1); }
 	| funcargs TCOMMA TVAR { $$=$1; $$->push_back(*$3); }
 	;
 
@@ -103,8 +103,8 @@ expr:
 	| TSTRING { $$ = new NStr(*$1); }
 	| TVAR   { $$ = new Variable(*$1);}
 	| TLBRACKET arrayelements TRBRACKET { $$ = $2; }
-	| arrayindex { $$ = $1 }
-	| callfunc { $$ = $1 }
+	| arrayindex { $$ = $1; }
+	| callfunc { $$ = $1; }
 	;
 
 comparison:
@@ -131,10 +131,9 @@ callfunc:
 	;
 
 funcvars:
-	%empty { $$ = new vector<NExp *> }
-	| expr { $$ = new vector<NExp *>; $$->push_back($1); }
+	%empty { $$ = new vector<NExp *>(); }
+	| expr { $$ = new vector<NExp *>(); $$->push_back($1); }
 	| funcvars TCOMMA expr { $$ = $1; $$->push_back($3); }
 	;
-
 
 %%

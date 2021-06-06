@@ -1,7 +1,7 @@
 %{
 #include "node.h"
-#include  <iostream>
 #include "parser.hpp"
+#include  <iostream>
 
 using namespace std;
 %}

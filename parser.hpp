@@ -96,7 +96,7 @@ union YYSTYPE
 	NCallFunc* call;
 	NStmt* stmt;
 	NExp* exp;
-	std::string* string;
+	std::string* str;
     double number;
 	int token;
 

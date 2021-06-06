@@ -5,7 +5,22 @@
 #include <vector>
 #include <string>
 #include "codeGen.h"
-#include "parser.hpp"
+
+enum binOpType
+{
+    TEQUAL = 260,
+    TPLUS = 261,
+    TMINUS = 262,
+    TMUL = 263,
+    TDIV = 264,
+    TMOD = 265,
+    TCEQ = 266,
+    TCNE = 267,
+    TCLT = 268,
+    TCLE = 269,
+    TCGT = 270,
+    TCGE = 271
+};
 
 using namespace llvm;
 using namespace std;
@@ -115,9 +130,9 @@ public:
 class NBinOp : public NExp
 {
 public:
-    enum yytokentype op;
+    enum binOpType op;
     NExp *left, *right;
-    NBinOp(enum yytokentype c, NExp *l, NExp *r) : NExp(TYPE_BINOP), op(c), left(l), right(r) {}
+    NBinOp(enum binOpType c, NExp *l, NExp *r) : NExp(TYPE_BINOP), op(c), left(l), right(r) {}
 
     Value *codeGen(CodeGenContext &context) override;
     string toString() override
