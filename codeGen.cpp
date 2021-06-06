@@ -188,9 +188,26 @@ Value *NCallFunc::codeGen(CodeGenContext &context)
             case TYPE_NUM:
                 cout << ((NNum *)i)->value;
                 break;
+
             case TYPE_STR:
                 cout << ((NStr *)i)->value;
                 break;
+
+            case TYPE_VAR:
+                NExp *val = ((NVariable *)i)->getTarget(context);
+                switch (val->type)
+                {
+                case TYPE_NUM:
+                    cout << ((NNum *)val)->value;
+                    break;
+                case TYPE_STR:
+                    cout << ((NStr *)val)->value;
+                    break;
+                default:
+                    Value *v = i->codeGen(context);
+                    cout << (((ConstantFP *)v)->getValue()).convertToDouble();
+                }
+
             default:
                 Value *v = i->codeGen(context);
                 cout << (((ConstantFP *)v)->getValue()).convertToDouble();
