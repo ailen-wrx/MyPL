@@ -148,16 +148,28 @@ Value *NBinOp::codeGen(CodeGenContext &context)
 
 Value *NCallFunc::codeGen(CodeGenContext &context)
 {
+    NFuncDef *f = context.functions[funcName];
+    if (f->args.size() != this->args.size())
+    {
+        cout << "function unmatched." << endl;
+        return NULL;
+    }
 }
 
 Value *NBlock::codeGen(CodeGenContext &context)
 {
+    Value *ret;
+    for (NStmt *i : statements)
+    {
+        ret = i->codeGen(context);
+        if (i->stmt_type == STMT_TYPE_RET)
+            return ret;
+    }
 }
 
 Value *NIfStmt::codeGen(CodeGenContext &context)
 {
     Log("If statement");
-    
 }
 
 Value *NWhileStmt::codeGen(CodeGenContext &context)
@@ -166,18 +178,7 @@ Value *NWhileStmt::codeGen(CodeGenContext &context)
 
 Value *NFuncDef::codeGen(CodeGenContext &context)
 {
-    vector<Type *> argsType(args.size(), PointerType::getDoublePtrTy(context.llvmcontext));
-    Type *retType = PointerType::getDoublePtrTy(context.llvmcontext);
-    FunctionType *functionType = FunctionType::get(retType, argsType, false);
-    Function *f = Function::Create(functionType, Function::ExternalLinkage, name, context.llvmmodule);
-
-    int idx = 0;
-    for (auto &i : f->args())
-        i.setName(args[idx++]);
-
-    BasicBlock *BB = BasicBlock::Create(context.llvmcontext, "entry", f);
-    context.builder.SetInsertPoint(BB);
-    context.block_stack.push_back(BB);
+    context.functions[name] = this;
 }
 
 Value *NRetStmt::codeGen(CodeGenContext &context)

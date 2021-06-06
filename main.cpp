@@ -9,14 +9,11 @@ int main()
     cout << "Succeed parsed" << endl;
 
     CodeGenContext context;
-    std::vector<Type *> sysArgs;
-    FunctionType *mainFuncType = FunctionType::get(Type::getVoidTy(context.llvmcontext), makeArrayRef(sysArgs), false);
-    Function *mainFunc = Function::Create(mainFuncType, GlobalValue::ExternalLinkage, "main");
-    BasicBlock *block = BasicBlock::Create(context.llvmcontext, "entry", mainFunc);
 
-    context.builder.SetInsertPoint(block);
-
-    context.block_stack.push_back(block);
+    // std::vector<Type *> sysArgs;
+    // FunctionType *mainFuncType = FunctionType::get(Type::getVoidTy(context.llvmcontext), makeArrayRef(sysArgs), false);
+    // Function *mainFunc = Function::Create(mainFuncType, GlobalValue::ExternalLinkage, "main");
+    // BasicBlock *block = BasicBlock::Create(context.llvmcontext, "entry", mainFunc);
 
     programBlock->codeGen(context);
 }
