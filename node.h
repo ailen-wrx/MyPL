@@ -162,21 +162,19 @@ public:
     };
 };
 
-class NForStmt : public NStmt
+class NWhileStmt : public NStmt
 {
 public:
-    string loopVar;
-    double start, end, step;
+    NExp *Cond;
     NBlock *body;
 
-    NForStmt(string var, double s, double e, double t, NBlock *b)
-        : loopVar(var), start(s), end(e), step(t), body(b) {}
+    NWhileStmt(NExp *c, NBlock *b)
+        : Cond(c), body(b) {}
 
     Value *codeGen(CodeGenContext &context) override;
     string toString() override
     {
-        return " FOR " + loopVar + " FROM " + to_string(start) + " TO " +
-               to_string(end) + " STEP " + to_string(step) + "\n  " + body->toString();
+        return " WHILE " + Cond->toString() + "\n  " + body->toString();
     };
 };
 
@@ -187,7 +185,7 @@ public:
     vector<string> args;
     NBlock *body;
 
-    NFuncDef(string n, vector<string> &a, NBlock *b) : name(n), args(a), body(b) {}
+    NFuncDef(string n, vector<string> *a, NBlock *b) : name(n), args(*a), body(b) {}
     Value *codeGen(CodeGenContext &context) override;
     string toString() override
     {
@@ -197,6 +195,19 @@ public:
         ret += "\n  " + body->toString();
         return ret;
     };
+};
+
+class NRetStmt : public NStmt
+{
+public:
+    NExp *retVal;
+    NRetStmt(NExp *ret) : retVal(ret) {}
+
+    Value *codeGen(CodeGenContext &context) override;
+    string toString() override
+    {
+        return " RETURN " + retVal->toString();
+    }
 };
 
 #endif

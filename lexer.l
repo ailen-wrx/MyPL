@@ -14,7 +14,7 @@ using namespace std;
 "if"                    return TIF;
 "else"                  return TELSE;
 "return"                return TRETURN;
-"for"                   return TFOR;
+"while"                 return TWHILE;
 "def"                   return TDEF;
 [a-zA-Z_][a-zA-Z0-9_]*  {yylval.string = new string(yytext); return TVAR; }
 [0-9]+\.[0-9]*          {sscanf(yytext,"%lf",&(yylval.number)); return TNUMBER; }
