@@ -50,12 +50,31 @@ extern int yydebug;
   enum yytokentype
   {
     TVAR = 258,
-    TEQUAL = 259,
-    TPLUS = 260,
-    TMINUS = 261,
-    TMUL = 262,
-    TDIV = 263,
-    TNUMBER = 264
+    TSTRING = 259,
+    TEQUAL = 260,
+    TPLUS = 261,
+    TMINUS = 262,
+    TMUL = 263,
+    TDIV = 264,
+    TMOD = 265,
+    TCEQ = 266,
+    TCNE = 267,
+    TCLT = 268,
+    TCLE = 269,
+    TCGT = 270,
+    TCGE = 271,
+    TIF = 272,
+    TELSE = 273,
+    TFOR = 274,
+    TRETURN = 275,
+    TLPAREN = 276,
+    TRPAREN = 277,
+    TLBRACE = 278,
+    TRBRACE = 279,
+    TLBRACKET = 280,
+    TRBRACKET = 281,
+    TCOMMA = 282,
+    TNUMBER = 283
   };
 #endif
 
@@ -71,7 +90,7 @@ union YYSTYPE
     double number;
 	int token;
 
-#line 75 "parser.hpp"
+#line 94 "parser.hpp"
 
 };
 typedef union YYSTYPE YYSTYPE;

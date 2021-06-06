@@ -1,8 +1,23 @@
+#include "codeGen.h"
 #include "node.h"
+using namespace std;
+
+void Log(string str)
+{
+    cout << "[LOG]  " << str << endl;
+}
+void Log(string str1, double str2)
+{
+    cout << "[LOG]  " << str1 << " : " << str2 << endl;
+}
+void Log(string str1, string str2)
+{
+    cout << "[LOG]  " << str1 << " : " << str2 << endl;
+}
 
 Value *NVariable::codeGen(CodeGenContext &context)
 {
-    // cout << "var:" << name << endl;
+    Log("Var", name);
     Value *V = context.vars[name]->codeGen(context);
     if (!V)
     {
@@ -14,7 +29,7 @@ Value *NVariable::codeGen(CodeGenContext &context)
 
 Value *NNum::codeGen(CodeGenContext &context)
 {
-    // cout << "double" << value << endl;
+    Log("Double", value);
     return ConstantFP::get(Type::getDoubleTy(context.llvmcontext), value);
 }
 
@@ -45,10 +60,10 @@ Value *NArrayIndex::codeGen(CodeGenContext &context)
 
 Value *NBinOp::codeGen(CodeGenContext &context)
 {
-    // cout << "====" << endl;
+    Log("====");
     if (op == '=')
     {
-        // cout << "enter" << endl;
+        Log("enter");
         NVariable *l = static_cast<NVariable *>(left);
         switch (right->type)
         {
@@ -70,11 +85,11 @@ Value *NBinOp::codeGen(CodeGenContext &context)
         return l->codeGen(context);
     }
 
-    // cout << "out" << endl;
+    Log("out");
     Value *L = left->codeGen(context);
-    cout << " left is " << (((ConstantFP *)L)->getValue()).convertToDouble() << endl;
+    Log("Left", (((ConstantFP *)L)->getValue()).convertToDouble());
     Value *R = right->codeGen(context);
-    cout << " right is " << (((ConstantFP *)R)->getValue()).convertToDouble() << endl;
+    Log("Right", (((ConstantFP *)R)->getValue()).convertToDouble());
     switch (op)
     {
     case '+':

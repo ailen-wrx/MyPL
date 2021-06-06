@@ -24,7 +24,7 @@ public:
 	Module llvmmodule;
 	map<string, NExp *> vars;
 
-	CodeGenContext() : llvmcontext(), builder(llvmcontext), llvmmodule("module", llvmcontext) {}
+	CodeGenContext() : builder(llvmcontext), llvmmodule("module", llvmcontext) {}
 };
 
 #endif

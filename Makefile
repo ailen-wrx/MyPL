@@ -6,6 +6,7 @@ OBJS = parser.o \
        main.o \
 
 LLVMCONFIG = /opt/llvm/bin/llvm-config
+# LLVMCONFIG = llvm-config
 CPPFLAGS = `$(LLVMCONFIG) --cxxflags`
 LDFLAGS = `$(LLVMCONFIG) --ldflags` -lpthread -ltinfo
 LIBS = `$(LLVMCONFIG) --libs`
