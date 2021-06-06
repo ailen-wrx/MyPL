@@ -85,14 +85,17 @@ whilestmt:
 	;
 
 expr: 
-	TVAR TEQUAL expr { $$ = new NBinOp('=', new NVariable($1),$3);}
+	TVAR TEQUAL expr { $$ = new NBinOp('=', new NVariable(*$1),$3);}
 	| expr TPLUS expr { $$ = new NBinOp('+', $1, $3); }
 	| expr TMINUS expr { $$ = new NBinOp('-', $1, $3);}
 	| expr TMUL expr { $$ = new NBinOp('*', $1, $3); }
 	| expr TDIV expr { $$ = new BinOp('/', $1, $3); }
 	| TNUMBER { $$ = new NNum($1); }
 	| TSTRING { $$ = new NStr(*$1); }
+	| TVAR   { $$ = new Variable(*$1);}
 	| /* Array */
+	| /* Array Index */
+	| /* call function  */
 	;
 
 %%

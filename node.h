@@ -17,6 +17,12 @@ using namespace std;
 #define TYPE_CALL 6
 #define TYPE_ARRIDX 7
 
+#define STMT_TYPE_EXP 11
+#define STMT_TYPE_IF 12
+#define STMT_TYPE_WHILE 13
+#define STMT_TYPE_FUNDEF 14
+#define STMT_TYPE_RET 15
+
 class Node
 {
 public:
@@ -26,13 +32,16 @@ public:
 
 class NStmt : public Node
 {
+public:
+    int stmt_type;
+    NStmt(int t) : stmt_type(t) {}
 };
 
 class NExp : public NStmt
 {
 public:
     int type;
-    NExp(int t) : type(t) {}
+    NExp(int t) : NStmt(STMT_TYPE_EXP), type(t) {}
 };
 
 class NVariable : public NExp
@@ -153,7 +162,8 @@ public:
     NExp *cond;
     NBlock *then, *el;
 
-    NIfStmt(NExp *c, NBlock *t, NBlock *e) : cond(c), then(t), el(e) {}
+    NIfStmt(NExp *c, NBlock *t, NBlock *e)
+        : NStmt(STMT_TYPE_IF), cond(c), then(t), el(e) {}
 
     Value *codeGen(CodeGenContext &context) override;
     string toString() override
@@ -169,7 +179,7 @@ public:
     NBlock *body;
 
     NWhileStmt(NExp *c, NBlock *b)
-        : Cond(c), body(b) {}
+        : NStmt(STMT_TYPE_WHILE), Cond(c), body(b) {}
 
     Value *codeGen(CodeGenContext &context) override;
     string toString() override
@@ -185,7 +195,8 @@ public:
     vector<string> args;
     NBlock *body;
 
-    NFuncDef(string n, vector<string> *a, NBlock *b) : name(n), args(*a), body(b) {}
+    NFuncDef(string n, vector<string> *a, NBlock *b)
+        : NStmt(STMT_TYPE_FUNDEF), name(n), args(*a), body(b) {}
     Value *codeGen(CodeGenContext &context) override;
     string toString() override
     {
@@ -201,7 +212,7 @@ class NRetStmt : public NStmt
 {
 public:
     NExp *retVal;
-    NRetStmt(NExp *ret) : retVal(ret) {}
+    NRetStmt(NExp *ret) : NStmt(STMT_TYPE_RET), retVal(ret) {}
 
     Value *codeGen(CodeGenContext &context) override;
     string toString() override
