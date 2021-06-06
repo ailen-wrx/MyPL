@@ -28,7 +28,7 @@ public:
 	Module llvmmodule;
 	map<string, Value *> vars;
 
-	CodeGenContext() : llvmcontext(), builder(llvmcontext), llvmmodule("module", llvmcontext) {}
+	CodeGenContext() : builder(llvmcontext), llvmmodule("module", llvmcontext) {}
 };
 
 class Node

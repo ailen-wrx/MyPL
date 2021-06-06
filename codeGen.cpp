@@ -1,4 +1,14 @@
 #include "codeGen.h"
+using namespace std;
+
+void Log(string str) 
+{
+    cout << "[LOG]  " << str << endl;
+}
+void Log(string str1, double str2) 
+{
+    cout << "[LOG]  " << str1 << str2 << endl;
+}
 
 Value *NVariable::codeGen(CodeGenContext &context)
 {
@@ -14,31 +24,43 @@ Value *NVariable::codeGen(CodeGenContext &context)
 
 Value *NDouble::codeGen(CodeGenContext &context)
 {
-    cout << "double" << value << endl;
+    Log("Double: ", value);
     return ConstantFP::get(Type::getDoubleTy(context.llvmcontext), value);
 }
 
 Value *NBinOp::codeGen(CodeGenContext &context)
 {
-    cout << "====" << endl;
+    Log("====");
     if (op == '=')
     {
-        cout << "enter" << endl;
+        Log("enter");
         NVariable *l = static_cast<NVariable *>(left);
-        Value *r = right->codeGen(context);
-        context.vars[l->name] = r;
-        // context.builder.CreateStore(r, context.vars[l->name]);
+        Value *lC = lC = l->codeGen(context);
+        Value *r = r = right->codeGen(context);
 
-        cout << l->name << " assigned " << (((ConstantFP *)r)->getValue()).convertToDouble() << endl;
+        /* Declare variable according to the type of r */
+        Type* type = llvm::Type::getFloatTy(context.llvmcontext);
+        context.builder.CreateLoad(lC, false, "");
+
+        
+        Value* initial = nullptr;
+        Value* inst = context.builder.CreateAlloca(type);
+        context.vars.insert(pair<string, Value *> (l->name, inst));
+
+        /* dst -> 0x00: No variable declared yet. */
+        Value *dst = context.vars.find(l->name)->second;
+        // context.vars[l->name] = r;
+        context.builder.CreateStore(r, dst);
+        Log("Assigned: ", (((ConstantFP *)r)->getValue()).convertToDouble());
 
         return r;
     }
 
-    cout << "out" << endl;
+    Log("out");
     Value *L = left->codeGen(context);
-    cout << " left is " << (((ConstantFP *)L)->getValue()).convertToDouble() << endl;
+    Log("Left: ", (((ConstantFP *)L)->getValue()).convertToDouble());
     Value *R = right->codeGen(context);
-    cout << " right is " << (((ConstantFP *)R)->getValue()).convertToDouble() << endl;
+    Log("Right: ", (((ConstantFP *)R)->getValue()).convertToDouble());
     switch (op)
     {
     case '+':
