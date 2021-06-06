@@ -164,6 +164,8 @@ Value *NWhileStmt::codeGen(CodeGenContext &context)
 
 Value *NFuncDef::codeGen(CodeGenContext &context)
 {
+
+    PointerType::get(args.size()
 }
 
 Value *NRetStmt::codeGen(CodeGenContext &context)
