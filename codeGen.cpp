@@ -100,7 +100,7 @@ void NArrayIndex::modify(CodeGenContext &context, NExp *newVal)
 Value *NBinOp::codeGen(CodeGenContext &context)
 {
     Log("====");
-    if (op == TEQUAL)
+    if (op == BINOP_EQUAL)
     {
         Log("enter");
         NExp *newVal;
@@ -108,29 +108,39 @@ Value *NBinOp::codeGen(CodeGenContext &context)
         {
         case TYPE_BINOP:
         case TYPE_CALL:
+        {
             newVal = new NNum(((ConstantFP *)right->codeGen(context))->getValue().convertToDouble());
             break;
+        }
         case TYPE_ARRIDX:
+        {
             NArrayIndex *r = static_cast<NArrayIndex *>(right);
             newVal = r->getTarget(context);
             break;
+        }
         case TYPE_VAR:
+        {
             newVal = context.vars[((NVariable *)right)->name];
             break;
+        }
         default:
             newVal = right;
         }
         switch (left->type)
         {
         case TYPE_VAR:
+        {
             NVariable *lvar = static_cast<NVariable *>(left);
             context.vars[lvar->name] = newVal;
             cout << left->toString() << " assigned " << context.vars[lvar->name]->toString() << endl;
             break;
+        }
         case TYPE_ARRIDX:
+        {
             NArrayIndex *larridx = static_cast<NArrayIndex *>(left);
             larridx->modify(context, newVal);
             break;
+        }
         default:
             cout << "Invalid assignment" << endl;
         }
@@ -143,27 +153,28 @@ Value *NBinOp::codeGen(CodeGenContext &context)
     Log("Right", (((ConstantFP *)R)->getValue()).convertToDouble());
     switch (op)
     {
-    case TPLUS:
+    case BINOP_PLUS:
         return context.builder.CreateFAdd(L, R, "addtmp");
-    case TMINUS:
+    case BINOP_MINUS:
         return context.builder.CreateFSub(L, R, "subtmp");
-    case TMUL:
+    case BINOP_MUL:
         return context.builder.CreateFMul(L, R, "multmp");
-    case TDIV:
+    case BINOP_DIV:
         return context.builder.CreateFDiv(L, R, "divtmp");
-    case TCLT:
+    case BINOP_CLT:
         return context.builder.CreateFCmpULT(L, R, "cmpftmp");
-    case TCLE:
+    case BINOP_CLE:
         return context.builder.CreateFCmpOLE(L, R, "cmpftmp");
-    case TCGE:
+    case BINOP_CGE:
         return context.builder.CreateFCmpOGE(L, R, "cmpftmp");
-    case TCGT:
+    case BINOP_CGT:
         return context.builder.CreateFCmpOGT(L, R, "cmpftmp");
-    case TCEQ:
+    case BINOP_CEQ:
         return context.builder.CreateFCmpOEQ(L, R, "cmpftmp");
-    case TCNE:
+    case BINOP_CNE:
         return context.builder.CreateFCmpONE(L, R, "cmpftmp");
     }
+    return NULL;
 }
 
 Value *NCallFunc::codeGen(CodeGenContext &context)
@@ -251,6 +262,7 @@ Value *NBlock::codeGen(CodeGenContext &context)
         if (i->stmt_type == STMT_TYPE_RET)
             return ret;
     }
+    return NULL;
 }
 
 Value *NIfStmt::codeGen(CodeGenContext &context)
@@ -266,6 +278,7 @@ Value *NIfStmt::codeGen(CodeGenContext &context)
     {
         this->then->codeGen(context);
     }
+    return NULL;
 }
 
 Value *NWhileStmt::codeGen(CodeGenContext &context)
@@ -278,11 +291,13 @@ Value *NWhileStmt::codeGen(CodeGenContext &context)
         condVal = this->Cond->codeGen(context);
         cond = static_cast<int>((((ConstantFP *)condVal)->getValue()).convertToDouble());
     }
+    return NULL;
 }
 
 Value *NFuncDef::codeGen(CodeGenContext &context)
 {
     context.functions[name] = this;
+    return NULL;
 }
 
 Value *NRetStmt::codeGen(CodeGenContext &context)

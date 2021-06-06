@@ -6,24 +6,21 @@
 #include <string>
 #include "codeGen.h"
 
-enum binOpType
-{
-    TEQUAL = 260,
-    TPLUS = 261,
-    TMINUS = 262,
-    TMUL = 263,
-    TDIV = 264,
-    TMOD = 265,
-    TCEQ = 266,
-    TCNE = 267,
-    TCLT = 268,
-    TCLE = 269,
-    TCGT = 270,
-    TCGE = 271
-};
-
 using namespace llvm;
 using namespace std;
+
+#define BINOP_EQUAL 260
+#define BINOP_PLUS 261
+#define BINOP_MINUS 262
+#define BINOP_MUL 263
+#define BINOP_DIV 264
+#define BINOP_MOD 265
+#define BINOP_CEQ 266
+#define BINOP_CNE 267
+#define BINOP_CLT 268
+#define BINOP_CLE 269
+#define BINOP_CGT 270
+#define BINOP_CGE 271
 
 #define TYPE_VAR 1
 #define TYPE_NUM 2
@@ -102,10 +99,9 @@ public:
     {
         string ret = "";
         for (auto i : elements)
-        {
             ret += i->toString();
-            return ret;
-        }
+
+        return ret;
     }
 };
 
@@ -130,9 +126,9 @@ public:
 class NBinOp : public NExp
 {
 public:
-    enum binOpType op;
+    int op;
     NExp *left, *right;
-    NBinOp(enum binOpType c, NExp *l, NExp *r) : NExp(TYPE_BINOP), op(c), left(l), right(r) {}
+    NBinOp(int c, NExp *l, NExp *r) : NExp(TYPE_BINOP), op(c), left(l), right(r) {}
 
     Value *codeGen(CodeGenContext &context) override;
     string toString() override
@@ -148,7 +144,7 @@ public:
     vector<NExp *> args;
     map<string, NExp *> vars_reserved;
 
-    NCallFunc(string name, vector<NExp *> a) : NExp(TYPE_CALL), funcName(name), args(a) {}
+    NCallFunc(string name, vector<NExp *> &a) : NExp(TYPE_CALL), funcName(name), args(a) {}
 
     Value *codeGen(CodeGenContext &context) override;
     string toString() override

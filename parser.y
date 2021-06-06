@@ -101,7 +101,7 @@ expr:
 	| expr comparison expr { $$ = new NBinOp($2, $1, $3); }
 	| TNUMBER { $$ = new NNum($1); }
 	| TSTRING { $$ = new NStr(*$1); }
-	| TVAR   { $$ = new Variable(*$1);}
+	| TVAR   { $$ = new NVariable(*$1);}
 	| TLBRACKET arrayelements TRBRACKET { $$ = $2; }
 	| arrayindex { $$ = $1; }
 	| callfunc { $$ = $1; }
@@ -113,12 +113,12 @@ comparison:
 
 arrayelements: 
 	%empty { $$ = new NArray(); }
-	| TNUMBER { $$ = new NArray(); $$.elements->push_back(new NNum(*$1)); }
-	| TSTRING { $$ = new NArray(); $$.elements->push_back(new NStr(*$1)); }
-	| TLBRACKET arrayelements TRBRACKET { $$ = new NArray(); $$.elements->push_back($2); }
-	| arrayelements TCOMMA TNUMBER { $$ = $1; $$.elements->push_back(new NNum(*$3)); }
-	| arrayelements TCOMMA TSTRING { $$ = $1; $$.elements->push_back(new NStr(*$3)); }
-	| arrayelements TCOMMA TLBRACKET arrayelements TRBRACKET { $$ = $1; $$.elements->push_back($4); }
+	| TNUMBER { $$ = new NArray(); $$->elements.push_back(new NNum($1)); }
+	| TSTRING { $$ = new NArray(); $$->elements.push_back(new NStr(*$1)); }
+	| TLBRACKET arrayelements TRBRACKET { $$ = new NArray(); $$->elements.push_back($2); }
+	| arrayelements TCOMMA TNUMBER { $$ = $1; $$->elements.push_back(new NNum($3)); }
+	| arrayelements TCOMMA TSTRING { $$ = $1; $$->elements.push_back(new NStr(*$3)); }
+	| arrayelements TCOMMA TLBRACKET arrayelements TRBRACKET { $$ = $1; $$->elements.push_back($4); }
 	;
 
 arrayindex:
@@ -127,7 +127,7 @@ arrayindex:
 	;
 
 callfunc:
-	TVAR TLPAREN funcvars TRPAREN { $$ = new NCallFunc(*$1, $3); }
+	TVAR TLPAREN funcvars TRPAREN { $$ = new NCallFunc(*$1, *$3); }
 	;
 
 funcvars:

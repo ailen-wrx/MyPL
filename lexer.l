@@ -16,10 +16,10 @@ using namespace std;
 "return"                return TRETURN;
 "while"                 return TWHILE;
 "def"                   return TDEF;
-[a-zA-Z_][a-zA-Z0-9_]*  {yylval.string = new string(yytext); return TVAR; }
+[a-zA-Z_][a-zA-Z0-9_]*  {yylval.str = new string(yytext); return TVAR; }
 [0-9]+\.[0-9]*          {sscanf(yytext,"%lf",&(yylval.number)); return TNUMBER; }
 [0-9]+                  {sscanf(yytext,"%lf",&(yylval.number)); return TNUMBER; }
-\"(\\.|[^"])*\"         {yylval.string = new string(yytext); return TSTRING; }
+\"(\\.|[^"])*\"         {yylval.str = new string(yytext); return TSTRING; }
 "+"                     return TPLUS;
 "-"                     return TMINUS;
 "*"                     return TMUL;
