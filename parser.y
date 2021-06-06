@@ -16,8 +16,11 @@ extern int yylex();
 {
     Node* node;
 	NBlock* block;
-	vector<string>* funcDefArgs;
+	vector<string>* stringVec;
+	vector<NExp *>* NExpVec;
 	NArray* array;
+	NArrayIndex* index;
+	NCallFunc* call;
 	NStmt* stmt;
 	NExp* exp;
 	std::string* string;
@@ -35,8 +38,12 @@ extern int yylex();
 %type <block> program stmts blk
 %type <exp> expr 
 %type <stmt> stmt ifstmt whilestmt funcdef
-%type <funcDefArgs> funcargs
+%type <stringVec> funcargs
+%type <NExpVec> funcvars
 %type <array> arrayelements
+%type <index> arrayindex
+%type <call> callfunc
+
 
 %left TEQUAL
 %left TPLUS TMINUS
@@ -99,7 +106,7 @@ expr:
 	;
 
 arrayelements: 
-	%empty {  }
+	%empty { $$ = new NArray(); }
 	| TNUMBER { $$ = new NArray(); $$.elements->push_back(new NNum(*$1)); }
 	| TSTRING { $$ = new NArray(); $$.elements->push_back(new NStr(*$1)); }
 	| TLBRACKET arrayelements TRBRACKET { $$ = new NArray(); $$.elements->push_back($2); }
@@ -109,7 +116,19 @@ arrayelements:
 	;
 
 arrayindex:
-	TVAR TLBRACKET expr TRBRACKET {}
-	| arrayindex TLBRACKET expr TRBRACKET {}
+	TVAR TLBRACKET expr TRBRACKET { $$ = new NArrayIndex(*$1, $3); }
+	| arrayindex TLBRACKET expr TRBRACKET { $$ = new NArrayIndex($1, $3); }
+	;
+
+callfunc:
+	TVAR TLPAREN funcvars TRPAREN { $$ = new NCallFunc(*$1, $3); }
+	;
+
+funcvars:
+	%empty { $$ = new vector<NExp *> }
+	| expr { $$ = new vector<NExp *>; $$->push_back($1); }
+	| funcvars TCOMMA expr { $$ = $1; $$->push_back($3); }
+	;
+
 
 %%
