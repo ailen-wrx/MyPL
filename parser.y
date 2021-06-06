@@ -43,6 +43,7 @@ extern int yylex();
 %type <array> arrayelements
 %type <index> arrayindex
 %type <call> callfunc
+%type <token> comparison
 
 
 %left TEQUAL
@@ -96,13 +97,18 @@ expr:
 	| expr TPLUS expr { $$ = new NBinOp('+', $1, $3); }
 	| expr TMINUS expr { $$ = new NBinOp('-', $1, $3);}
 	| expr TMUL expr { $$ = new NBinOp('*', $1, $3); }
-	| expr TDIV expr { $$ = new BinOp('/', $1, $3); }
+	| expr TDIV expr { $$ = new NBinOp('/', $1, $3); }
+	| expr comparison expr { $$ = new NBinOp(*$2, $1, $3); }
 	| TNUMBER { $$ = new NNum($1); }
 	| TSTRING { $$ = new NStr(*$1); }
 	| TVAR   { $$ = new Variable(*$1);}
 	| TLBRACKET arrayelements TRBRACKET { $$ = $2; }
-	| arrayindex {}
-	| /* call function  */
+	| arrayindex { $$ = $1 }
+	| callfunc { $$ = $1 }
+	;
+
+comparison:
+	TCEQ | TCNE | TCLT | TCLE | TCGT | TCGE
 	;
 
 arrayelements: 
