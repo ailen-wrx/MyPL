@@ -102,3 +102,28 @@ Value *NBinOp::codeGen(CodeGenContext &context)
         return context.builder.CreateFDiv(L, R, "divtmp");
     }
 }
+
+Value *NCallFunc::codeGen(CodeGenContext &context)
+{
+}
+
+Value *NBlock::codeGen(CodeGenContext &context)
+{
+}
+
+Value *NIfStmt::codeGen(CodeGenContext &context)
+{
+}
+
+Value *NWhileStmt::codeGen(CodeGenContext &context)
+{
+}
+
+Value *NFuncDef::codeGen(CodeGenContext &context)
+{
+}
+
+Value *NRetStmt::codeGen(CodeGenContext &context)
+{
+    return retVal->codeGen(context);
+}
