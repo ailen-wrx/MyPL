@@ -22,7 +22,6 @@ Value *NVariable::codeGen(CodeGenContext &context)
     if (!V)
     {
         cout << "Unknown variable name" << endl;
-        ;
     }
     return V;
 }
@@ -131,8 +130,24 @@ Value *NBinOp::codeGen(CodeGenContext &context)
         case TYPE_VAR:
         {
             NVariable *lvar = static_cast<NVariable *>(left);
-            context.vars[lvar->name] = newVal;
-            cout << "[LOG]  " << left->toString() << " assigned " << context.vars[lvar->name]->toString() << endl;
+            Value *dst = context.getSymbolValue(lvar->name);
+            if (dst != nullptr)
+            {
+            }
+            else
+            {
+                /* Valid Code */
+                Type *type = context.getType(this->right->type);
+                Value *inst = context.builder.CreateAlloca(type);
+                context.blockStack.back()->locals[lvar->name] = inst;
+                context.blockStack.back()->types[lvar->name] = this->type;
+                Value *rvar = right->codeGen(context);
+                context.builder.CreateStore(rvar, dst);
+                return dst;
+                /* End of valid code */
+            }
+            // context.vars[lvar->name] = newVal;
+            // cout << "[LOG]  " << left->toString() << " assigned " << context.vars[lvar->name]->toString() << endl;
             break;
         }
         case TYPE_ARRIDX:

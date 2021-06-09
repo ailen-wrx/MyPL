@@ -1,7 +1,4 @@
-a=7
-def foo(a)
-{
-    print(a)
-    return a
-}
-foo(a)
+a=7;
+print(a);
+b="test";
+print(b);

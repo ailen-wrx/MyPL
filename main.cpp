@@ -1,7 +1,9 @@
 #include "node.h"
+#include "codeGen.h"
 #include "parser.hpp"
 
-extern Node *programBlock;
+extern NBlock *programBlock;
+extern int yyparse();
 
 int main()
 {
@@ -9,11 +11,5 @@ int main()
     cout << "[LOG]  Parsing Successful" << endl;
 
     CodeGenContext context;
-
-    // std::vector<Type *> sysArgs;
-    // FunctionType *mainFuncType = FunctionType::get(Type::getVoidTy(context.llvmcontext), makeArrayRef(sysArgs), false);
-    // Function *mainFunc = Function::Create(mainFuncType, GlobalValue::ExternalLinkage, "main");
-    // BasicBlock *block = BasicBlock::Create(context.llvmcontext, "entry", mainFunc);
-
-    programBlock->codeGen(context);
+    context.generateCode(*programBlock);
 }
