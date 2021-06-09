@@ -23,7 +23,7 @@ This is the repo of our course design for *Compiler Principles*, spring-summer s
 
 ## Documentation
 
-[click to browse](Documentation)
+[click to browse](Documentation.md)
 
 
 
