@@ -1,10 +1,11 @@
 #ifndef _NODE_H
 #define _NODE_H
 
+#include <llvm/IR/Value.h>
 #include <iostream>
 #include <vector>
+#include <map>
 #include <string>
-#include "codeGen.h"
 
 using namespace llvm;
 using namespace std;
@@ -29,12 +30,19 @@ using namespace std;
 #define TYPE_BINOP 5
 #define TYPE_CALL 6
 #define TYPE_ARRIDX 7
+#define TYPE_IDENTIFIER 8
 
 #define STMT_TYPE_EXP 11
 #define STMT_TYPE_IF 12
 #define STMT_TYPE_WHILE 13
 #define STMT_TYPE_FUNDEF 14
 #define STMT_TYPE_RET 15
+
+class CodeGenContext;
+class Node;
+class NBlock;
+class NFuncDef;
+class NExp;
 
 class Node
 {
