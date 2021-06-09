@@ -31,5 +31,5 @@ run: compiler
 
 .PHONY: clean run
 clean:
-	rm -f parser.cpp lexer.cpp *.o compile
+	rm -f parser.cpp parser.hpp lexer.cpp *.o compiler
 	

@@ -1,6 +1,7 @@
 %{
 #include "node.h"
 #include <memory>
+int yydebug = 1;
 
 NBlock* programBlock;
 
@@ -32,15 +33,15 @@ extern int yylex();
 %token <token> TEQUAL TPLUS TMINUS TMUL TDIV TMOD
 %token <token> TCEQ TCNE TCLT TCLE TCGT TCGE 
 %token <token> TIF TELSE TFOR TRETURN TDEF TWHILE
-%token <token> TLPAREN TRPAREN TLBRACE TRBRACE TLBRACKET TRBRACKET TCOMMA TCOLON
+%token <token> TLPAREN TRPAREN TLBRACE TRBRACE TLBRACKET TRBRACKET TCOMMA TCOLON TSEMICOLON
 %token <number> TNUMBER
 
 %type <block> program stmts blk
-%type <exp> expr 
+%type <exp> expr boolexpr
 %type <stmt> stmt ifstmt whilestmt funcdef
 %type <stringVec> funcargs
 %type <NExpVec> funcvars
-%type <array> arrayelements
+%type <array> arrayelements arraydecl
 %type <index> arrayindex
 %type <call> callfunc
 %type <token> comparison
@@ -49,6 +50,7 @@ extern int yylex();
 %left TEQUAL
 %left TPLUS TMINUS
 %left TMUL TDIV
+%left TCEQ TCNE TCLT TCLE TCGT TCGE 
 
 %start program
 
@@ -62,8 +64,8 @@ stmts:
 	;
 
 stmt: 
-	expr { $$=$1;}
-	| TRETURN expr { $$ = new NRetStmt($2); }
+	expr TSEMICOLON { $$=$1;}
+	| TRETURN expr TSEMICOLON { $$ = new NRetStmt($2); }
 	| ifstmt { $$ = $1;}
 	| whilestmt { $$ = $1;}
 	| funcdef { $$ = $1;}
@@ -85,11 +87,11 @@ funcargs:
 	;
 
 ifstmt: 
-	TIF TLPAREN expr TRPAREN blk TELSE blk { $$=new NIfStmt($3,$5,$7); }
+	TIF TLPAREN boolexpr TRPAREN blk TELSE blk { $$=new NIfStmt($3,$5,$7); }
 	;
 
 whilestmt: 
-	TWHILE TLPAREN expr TRPAREN blk {$$=new NWhileStmt($3,$5);} 
+	TWHILE TLPAREN boolexpr TRPAREN blk {$$=new NWhileStmt($3,$5);} 
 	;
 
 expr: 
@@ -98,13 +100,17 @@ expr:
 	| expr TMINUS expr { $$ = new NBinOp($2, $1, $3);}
 	| expr TMUL expr { $$ = new NBinOp($2, $1, $3); }
 	| expr TDIV expr { $$ = new NBinOp($2, $1, $3); }
-	| expr comparison expr { $$ = new NBinOp($2, $1, $3); }
 	| TNUMBER { $$ = new NNum($1); }
 	| TSTRING { $$ = new NStr(*$1); }
 	| TVAR   { $$ = new NVariable(*$1);}
-	| TLBRACKET arrayelements TRBRACKET { $$ = $2; }
+	| TLBRACE arrayelements TRBRACE { $$ = $2; }
+	| TLBRACKET arraydecl TRBRACKET { $$ = $2; }
 	| arrayindex { $$ = $1; }
 	| callfunc { $$ = $1; }
+	;
+
+boolexpr:
+	expr comparison expr { $$ = new NBinOp($2, $1, $3); }
 	;
 
 comparison:
@@ -119,6 +125,11 @@ arrayelements:
 	| arrayelements TCOMMA TNUMBER { $$ = $1; $$->elements.push_back(new NNum($3)); }
 	| arrayelements TCOMMA TSTRING { $$ = $1; $$->elements.push_back(new NStr(*$3)); }
 	| arrayelements TCOMMA TLBRACKET arrayelements TRBRACKET { $$ = $1; $$->elements.push_back($4); }
+	;
+
+arraydecl: 
+	%empty { $$ = new NArray(); }
+	| TNUMBER { $$ = new NArray(); }
 	;
 
 arrayindex:

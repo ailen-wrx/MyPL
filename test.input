@@ -1,9 +1,7 @@
 a=7
-if (a > 3)
+def foo(a)
 {
-    print("true")
-} else {
-    print("false")
+    print(a)
+    return a
 }
-b="test"
-print(b)
+foo(a)

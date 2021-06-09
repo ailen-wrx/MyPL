@@ -7,4 +7,10 @@
 *.o
 compiler
 lexer.cpp
+lex.yy.c
+
 parser.cpp
+parser.hpp
+parser.tab.c
+parser.output
+parser.tab.h

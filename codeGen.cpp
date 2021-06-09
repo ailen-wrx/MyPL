@@ -187,27 +187,40 @@ Value *NCallFunc::codeGen(CodeGenContext &context)
             switch (i->type)
             {
             case TYPE_NUM:
+            {
                 cout << ((NNum *)i)->value;
                 break;
+            }
 
             case TYPE_STR:
+            {
                 cout << ((NStr *)i)->value;
                 break;
+            }
 
             case TYPE_VAR:
+            {
                 NExp *val = ((NVariable *)i)->getTarget(context);
                 switch (val->type)
                 {
                 case TYPE_NUM:
+                {
                     cout << ((NNum *)val)->value;
                     break;
+                }
                 case TYPE_STR:
+                {
                     cout << ((NStr *)val)->value;
                     break;
+                }
                 default:
+                {
                     Value *v = i->codeGen(context);
                     cout << (((ConstantFP *)v)->getValue()).convertToDouble();
                 }
+                }
+                break;
+            }
 
             default:
                 Value *v = i->codeGen(context);
@@ -263,7 +276,7 @@ Value *NCallFunc::codeGen(CodeGenContext &context)
 
     int idx = 0;
     for (auto i : this->args)
-        context.vars[f->args[idx]] = i;
+        context.vars[f->args[idx++]] = i;
 
     Value *ret = f->body->codeGen(context);
 
