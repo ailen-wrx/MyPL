@@ -38,7 +38,7 @@ using namespace std;
 "/"                     puts("TDIV"); return TOKEN(TDIV);
 "%"                     puts("TMOD"); return TOKEN(TMOD);
 "="                     puts("TEQUAL"); return TOKEN(TEQUAL);
-"=="					puts(""TCEQ); return TOKEN(TCEQ);
+"=="					puts("TCEQ"); return TOKEN(TCEQ);
 "!="                    puts("TCNE"); return TOKEN(TCNE);
 "<"                     puts("TCLT"); return TOKEN(TCLT);
 "<="                    puts("TCLE"); return TOKEN(TCLE);
