@@ -2,6 +2,8 @@ default: compiler
 
 OBJS = parser.o \
        lexer.o \
+	   util.o \
+	   node.o \
        codeGen.o \
        main.o \
 

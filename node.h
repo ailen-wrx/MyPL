@@ -7,6 +7,8 @@
 #include <map>
 #include <string>
 
+#include "util.h"
+
 using namespace llvm;
 using namespace std;
 
@@ -39,10 +41,6 @@ using namespace std;
 #define STMT_TYPE_RET 15
 
 class CodeGenContext;
-class Node;
-class NBlock;
-class NFuncDef;
-class NExp;
 
 class Node
 {
@@ -72,7 +70,6 @@ public:
     NVariable(string s) : NExp(TYPE_VAR), name(s) {}
 
     Value *codeGen(CodeGenContext &context) override;
-    NExp *getTarget(CodeGenContext &context);
     string toString() override { return name; };
 };
 
@@ -108,7 +105,6 @@ public:
         string ret = "";
         for (auto i : elements)
             ret += i->toString();
-
         return ret;
     }
 };
@@ -123,7 +119,7 @@ public:
     NArrayIndex(NArrayIndex *s, NExp *idx) : NExp(TYPE_ARRIDX), arrName(""), super(s), index(idx) {}
     NArrayIndex(string name, NExp *idx) : NExp(TYPE_ARRIDX), arrName(name), super(NULL), index(idx) {}
     Value *codeGen(CodeGenContext &context) override;
-    NExp *getTarget(CodeGenContext &context);
+    NArray *getArrayNode(CodeGenContext &context);
     void modify(CodeGenContext &context, NExp *newVal);
     string toString() override
     {

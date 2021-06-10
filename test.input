@@ -1,4 +1,4 @@
-a=7;
+a="str";
 print(a);
 b="test";
 print(b);

@@ -1,5 +1,5 @@
 %{
-#include "node.h"
+#include "codeGen.h"
 #include "parser.hpp"
 #include  <iostream>
 #define TOKEN(t) ( yylval.token = t)
