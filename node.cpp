@@ -88,26 +88,20 @@ Value *NBinOp::codeGen(CodeGenContext &context)
 Value *NCallFunc::codeGen(CodeGenContext &context)
 {
     Log("Function Call: ", this->funcName);
-    Function *calleeFunc = context.module.getFunction(this->funcName);
-    if (!calleeFunc)
+    Function *f = context.module.getFunction(funcName);
+    if (!f)
     {
         // TODO: search for BuiltIn methods
         return nullptr;
-    }
-    if (calleeFunc->arg_size() != this->args.size())
-    {
-        cout << "Arguments fail to match function " << this->funcName << endl;
     }
     vector<Value *> argsVec;
     for (NExp *arg : args)
     {
         argsVec.push_back(arg->codeGen(context));
         if (!argsVec.back())
-        {
             return nullptr;
-        }
     }
-    return context.builder.CreateCall(calleeFunc, argsVec, "calltmp");
+    return context.builder.CreateCall(f, argsVec, "calltmp");
 }
 
 Value *NBlock::codeGen(CodeGenContext &context)
@@ -180,9 +174,34 @@ Value *NWhileStmt::codeGen(CodeGenContext &context)
 
 Value *NFuncDef::codeGen(CodeGenContext &context)
 {
-    vector<Type *> argTypes;
     context.functions[name] = this;
-    return nullptr;
+
+    vector<Type *> argTypes(args.size(), context.typeToLLVMType(TYPE_NUM));
+    Type *retType = nullptr;
+    FunctionType *funcType = FunctionType::get(retType, argTypes, false);
+    Function *f = Function::Create(funcType, GlobalValue::ExternalLinkage, name.c_str(), context.module);
+
+    BasicBlock *block = BasicBlock::Create(context.llvmcontext, "entry", f, nullptr);
+    context.builder.SetInsertPoint(block);
+    context.pushBlock(block);
+
+    int index = 0;
+    for (auto &a : f->args())
+    {
+        a.setName(args[index]);
+        Value *argAlloc = context.builder.CreateAlloca(context.typeToLLVMType(TYPE_NUM));
+        context.builder.CreateStore(&a, argAlloc);
+        context.getCurrentBlock()->localVars[args[index]] = argAlloc;
+        context.getCurrentBlock()->localVarTypes[args[index]] = TYPE_NUM;
+        index++;
+    }
+
+    body->codeGen(context);
+    context.builder.CreateRet(context.getCurrentBlock()->returnValue);
+
+    context.popBlock();
+
+    return f;
 }
 
 Value *NRetStmt::codeGen(CodeGenContext &context)
