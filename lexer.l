@@ -33,6 +33,7 @@ using namespace std;
 [0-9]+\.[0-9]*          puts("TNUMBER"); {sscanf(yytext,"%lf",&(yylval.number)); return TNUMBER; }
 [0-9]+                  puts("TNUMBER"); {sscanf(yytext,"%lf",&(yylval.number)); return TNUMBER; }
 \"(\\.|[^"])*\"         puts("TSTRING"); {yylval.str = new string(yytext); return TSTRING; }
+\'(\\.|[^"])\'          puts("TCHAR"); {yylval.ch = yytext[1]; return TCHAR; }
 "+"                     puts("TPLUS"); return TOKEN(TPLUS);
 "-"                     puts("TMINUS"); return TOKEN(TMINUS);
 "*"                     puts("TMUL"); return TOKEN(TMUL);
