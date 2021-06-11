@@ -87,67 +87,94 @@ Value *NBinOp::codeGen(CodeGenContext &context)
 
 Value *NCallFunc::codeGen(CodeGenContext &context)
 {
-    // NFuncDef *f = context.functions[funcName];
-    // if (f->args.size() != this->args.size())
-    // {
-    //     cout << "function unmatched." << endl;
-    //     return nullptr;
-    // }
-
-    // vars_reserved = context.vars;
-    // context.vars.clear();
-
-    // int idx = 0;
-    // for (auto i : this->args)
-    //     context.vars[f->args[idx++]] = i;
-
-    // Value *ret = f->body->codeGen(context);
-
-    // context.vars = vars_reserved;
-
-    // return ret;
-    return nullptr;
+    Log("Function Call: ", this->funcName);
+    Function *calleeFunc = context.module.getFunction(this->funcName);
+    if (!calleeFunc)
+    {
+        // TODO: search for BuiltIn methods
+        return nullptr;
+    }
+    if (calleeFunc->arg_size() != this->args.size())
+    {
+        cout << "Arguments fail to match function " << this->funcName << endl;
+    }
+    vector<Value *> argsVec;
+    for (NExp *arg : args)
+    {
+        argsVec.push_back(arg->codeGen(context));
+        if (!argsVec.back())
+        {
+            return nullptr;
+        }
+    }
+    return context.builder.CreateCall(calleeFunc, argsVec, "calltmp");
 }
 
 Value *NBlock::codeGen(CodeGenContext &context)
 {
-    Value *ret;
+    Log("Block");
+    Value *ret = nullptr;
     for (NStmt *i : statements)
     {
         ret = i->codeGen(context);
         if (i->stmt_type == STMT_TYPE_RET)
             return ret;
     }
-    return nullptr;
+    return ret;
 }
 
 Value *NIfStmt::codeGen(CodeGenContext &context)
 {
     Log("If statement");
     Value *condVal = this->cond->codeGen(context);
-    auto cond = ((ConstantInt *)condVal)->getLimitedValue();
-    if (cond == 0)
+    if (!condVal)
+        return nullptr;
+    condVal = context.builder.CreateIntCast(condVal, Type::getInt1Ty(context.llvmcontext), true);
+    Function *parentFunc = context.builder.GetInsertBlock()->getParent();
+    BasicBlock *thenBlk = BasicBlock::Create(context.llvmcontext, "then", parentFunc);
+    BasicBlock *elseBlk = BasicBlock::Create(context.llvmcontext, "else");
+    BasicBlock *contBlk = BasicBlock::Create(context.llvmcontext, "ifcont");
+    context.builder.CreateCondBr(condVal, thenBlk, elseBlk);
+    context.builder.SetInsertPoint(thenBlk);
+    context.pushBlock(thenBlk);
+    this->then->codeGen(context);
+    context.popBlock();
+    thenBlk = context.builder.GetInsertBlock();
+    if (thenBlk->getTerminator() == nullptr)
     {
-        this->el->codeGen(context);
+        context.builder.CreateBr(contBlk);
     }
-    else
-    {
-        this->then->codeGen(context);
-    }
+    parentFunc->getBasicBlockList().push_back(elseBlk);
+    context.builder.SetInsertPoint(elseBlk);
+    context.pushBlock(thenBlk);
+    this->el->codeGen(context);
+    context.popBlock();
+    context.builder.CreateBr(contBlk);
+    parentFunc->getBasicBlockList().push_back(contBlk);
+    context.builder.SetInsertPoint(contBlk);
     return nullptr;
 }
 
 Value *NWhileStmt::codeGen(CodeGenContext &context)
 {
-    Value *condVal = this->Cond->codeGen(context);
-    auto cond = ((ConstantInt *)condVal)->getLimitedValue();
-
-    while (cond != 0)
-    {
-        this->body->codeGen(context);
-        condVal = this->Cond->codeGen(context);
-        cond = ((ConstantInt *)condVal)->getLimitedValue();
-    }
+    Log("While statement");
+    Value *condVal = this->cond->codeGen(context);
+    if (!condVal)
+        return nullptr;
+    condVal = context.builder.CreateIntCast(condVal, Type::getInt1Ty(context.llvmcontext), true);
+    Function *parentFunc = context.builder.GetInsertBlock()->getParent();
+    BasicBlock *loopBlk = BasicBlock::Create(context.llvmcontext, "whileloop", parentFunc);
+    BasicBlock *contBlk = BasicBlock::Create(context.llvmcontext, "whilecont");
+    context.builder.CreateCondBr(condVal, loopBlk, contBlk);
+    context.builder.SetInsertPoint(loopBlk);
+    context.pushBlock(loopBlk);
+    this->body->codeGen(context);
+    context.popBlock();
+    condVal = this->cond->codeGen(context);
+    condVal = context.builder.CreateIntCast(condVal, Type::getInt1Ty(context.llvmcontext), true);
+    context.builder.CreateCondBr(condVal, loopBlk, contBlk);
+    parentFunc->getBasicBlockList().push_back(contBlk);
+    context.builder.SetInsertPoint(contBlk);
     return nullptr;
 }
 

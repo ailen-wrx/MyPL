@@ -1,4 +1,9 @@
 a="str";
 print(a);
-b="test";
+b=1;
 print(b);
+if (b>0) {
+    print (b);
+} else {
+    b=b+1;
+}

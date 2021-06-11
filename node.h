@@ -197,16 +197,16 @@ public:
 class NWhileStmt : public NStmt
 {
 public:
-    NExp *Cond;
+    NExp *cond;
     NBlock *body;
 
     NWhileStmt(NExp *c, NBlock *b)
-        : NStmt(STMT_TYPE_WHILE), Cond(c), body(b) {}
+        : NStmt(STMT_TYPE_WHILE), cond(c), body(b) {}
 
     Value *codeGen(CodeGenContext &context) override;
     string toString() override
     {
-        return " WHILE " + Cond->toString() + "\n  " + body->toString();
+        return " WHILE " + cond->toString() + "\n  " + body->toString();
     };
 };
 
