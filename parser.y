@@ -32,7 +32,7 @@ extern int yylex();
 %token <str> TVAR TSTRING
 %token <token> TEQUAL TPLUS TMINUS TMUL TDIV TMOD
 %token <token> TCEQ TCNE TCLT TCLE TCGT TCGE 
-%token <token> TIF TELSE TFOR TRETURN TDEF TWHILE
+%token <token> TIF TELSE TFOR TRETURN TDEF TWHILE TEXTERN
 %token <token> TLPAREN TRPAREN TLBRACE TRBRACE TLBRACKET TRBRACKET TCOMMA TCOLON TSEMICOLON
 %token <number> TNUMBER
 
@@ -78,6 +78,7 @@ blk:
 
 funcdef: 
 	TDEF TVAR TLPAREN funcargs TRPAREN blk	{ $$ = new NFuncDef(*$2,$4,$6);}
+	| TEXTERN TVAR TLPAREN funcargs TRPAREN TSEMICOLON {  }
 	;
 
 funcargs: 

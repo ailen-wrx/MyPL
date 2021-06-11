@@ -28,6 +28,7 @@ using namespace std;
 "return"                puts("TRETURN"); return TOKEN(TRETURN);
 "while"                 puts("TWHILE"); return TOKEN(TWHILE);
 "def"                   puts("TDEF"); return TOKEN(TDEF);
+"extern"                puts("TEXTERN"); return TOKEN(TEXTERN);
 [a-zA-Z_][a-zA-Z0-9_]*  puts("TVAR"); {yylval.str = new string(yytext); return TVAR; }
 [0-9]+\.[0-9]*          puts("TNUMBER"); {sscanf(yytext,"%lf",&(yylval.number)); return TNUMBER; }
 [0-9]+                  puts("TNUMBER"); {sscanf(yytext,"%lf",&(yylval.number)); return TNUMBER; }

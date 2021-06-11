@@ -177,8 +177,7 @@ Value *NFuncDef::codeGen(CodeGenContext &context)
     context.functions[name] = this;
 
     vector<Type *> argTypes(args.size(), context.typeToLLVMType(TYPE_NUM));
-    Type *retType = nullptr;
-    FunctionType *funcType = FunctionType::get(retType, argTypes, false);
+    FunctionType *funcType = FunctionType::get(context.typeToLLVMType(TYPE_NUM), argTypes, false);
     Function *f = Function::Create(funcType, GlobalValue::ExternalLinkage, name.c_str(), *context.module);
 
     BasicBlock *block = BasicBlock::Create(context.llvmcontext, "entry", f, nullptr);
@@ -200,6 +199,7 @@ Value *NFuncDef::codeGen(CodeGenContext &context)
     context.builder.CreateRet(context.getCurrentBlock()->returnValue);
 
     context.popBlock();
+    context.builder.SetInsertPoint(context.getCurrentBlock()->block);
 
     return f;
 }

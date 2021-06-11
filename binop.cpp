@@ -5,6 +5,7 @@ map<int, Value *(*)(CodeGenContext &context, NExp *left, NExp *right)> BinaryOpe
 Value *binaryAssign(CodeGenContext &context, NExp *left, NExp *right)
 {
     Type *type = context.typeToLLVMType(right->type);
+    //TODO: right->type bug(BinOp).
     Value *dst = context.builder.CreateAlloca(type);
 
     NVariable *lvar = static_cast<NVariable *>(left);
