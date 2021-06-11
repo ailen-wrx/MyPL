@@ -1,17 +1,1 @@
-a=1;
-def foo(x) {
-    x=2;
-}
-b=0;
-foo(b);
-if (b>0) {
-    b=1;
-} else {
-    b=2;
-}
-while (a>0) {
-    c=1;
-}
-while (a>0) {
-    c=1;
-}
+a="testcase";
