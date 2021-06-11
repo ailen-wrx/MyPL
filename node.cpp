@@ -1,4 +1,5 @@
 #include "codeGen.h"
+extern map<int, Value *(*)(CodeGenContext &context, NExp *left, NExp *right)> BinaryOperation;
 
 Value *NVariable::codeGen(CodeGenContext &context)
 {
@@ -7,8 +8,13 @@ Value *NVariable::codeGen(CodeGenContext &context)
     if (!V)
     {
         cout << "Unknown variable name" << endl;
+        return nullptr;
     }
-    return V;
+    if (context.getType(name) == TYPE_ARR)
+    {
+        // TODO: Deal with array
+    }
+    return context.builder.CreateLoad(V, false, "");
 }
 
 Value *NNum::codeGen(CodeGenContext &context)
@@ -19,13 +25,14 @@ Value *NNum::codeGen(CodeGenContext &context)
 
 Value *NStr::codeGen(CodeGenContext &context)
 {
+    Log("String", value);
     return context.builder.CreateGlobalString(value, "string");
 }
 
 Value *NArray::codeGen(CodeGenContext &context)
 {
     cout << "Invalid use of array" << endl;
-    return NULL;
+    return nullptr;
 }
 
 NArray *NArrayIndex::getArrayNode(CodeGenContext &context)
@@ -35,68 +42,46 @@ NArray *NArrayIndex::getArrayNode(CodeGenContext &context)
 
 Value *NArrayIndex::codeGen(CodeGenContext &context)
 {
-    int intIndex = int(((ConstantFP *)index->codeGen(context))->getValue().convertToDouble());
+    // TODO: to check
 
-    return getArrayNode(context)->elements[intIndex]->codeGen(context);
+    Value *arrPtr = context.getSymbolValue(arrName);
+    if (!arrPtr)
+    {
+        cout << "Unknown variable name" << endl;
+        return nullptr;
+    }
+
+    Value *indexValue = index->codeGen(context);
+
+    arrPtr = context.builder.CreateLoad(arrPtr, "actualArrayPtr");
+    Value *ptr = context.builder.CreateInBoundsGEP(arrPtr, indexValue, "elementPtr");
+
+    return context.builder.CreateAlignedLoad(ptr, MaybeAlign(4));
 }
 
-void NArrayIndex::modify(CodeGenContext &context, NExp *newVal)
+Value *NArrayIndex::modify(CodeGenContext &context, NExp *newVal)
 {
+    // TODO: to check
+
+    Value *arrPtr = context.getSymbolValue(arrName);
+    if (!arrPtr)
+    {
+        cout << "Unknown variable name" << endl;
+        return nullptr;
+    }
+
+    Value *indexValue = index->codeGen(context);
+
+    arrPtr = context.builder.CreateLoad(arrPtr, "actualArrayPtr");
+    Value *ptr = context.builder.CreateInBoundsGEP(arrPtr, indexValue, "elementPtr");
+
+    return context.builder.CreateAlignedStore(newVal->codeGen(context), ptr, MaybeAlign(4));
 }
 
 Value *NBinOp::codeGen(CodeGenContext &context)
 {
-    Log("====");
-    if (op == BINOP_EQUAL)
-    {
-        Log("enter");
-        Value *newVal = right->codeGen(context);
-
-        NVariable *lvar = static_cast<NVariable *>(left);
-
-        /* Valid Code */
-        Type *type = context.typeToLLVMType(right->type);
-        Value *inst = context.builder.CreateAlloca(type);
-        context.getCurrentBlock()->localVars[lvar->name] = inst;
-        context.getCurrentBlock()->localVarTypes[lvar->name] = right->type;
-        Value *rvar = right->codeGen(context);
-        Value *dst = context.getSymbolValue(lvar->name);
-        context.builder.CreateStore(rvar, dst);
-        return dst;
-        /* End of valid code */
-
-        return NULL;
-    }
-
-    Log("out");
-    Value *L = left->codeGen(context);
-    Log("Left", (((ConstantFP *)L)->getValue()).convertToDouble());
-    Value *R = right->codeGen(context);
-    Log("Right", (((ConstantFP *)R)->getValue()).convertToDouble());
-    switch (op)
-    {
-    case BINOP_PLUS:
-        return context.builder.CreateFAdd(L, R, "addtmp");
-    case BINOP_MINUS:
-        return context.builder.CreateFSub(L, R, "subtmp");
-    case BINOP_MUL:
-        return context.builder.CreateFMul(L, R, "multmp");
-    case BINOP_DIV:
-        return context.builder.CreateFDiv(L, R, "divtmp");
-    case BINOP_CLT:
-        return context.builder.CreateFCmpULT(L, R, "cmpftmp");
-    case BINOP_CLE:
-        return context.builder.CreateFCmpOLE(L, R, "cmpftmp");
-    case BINOP_CGE:
-        return context.builder.CreateFCmpOGE(L, R, "cmpftmp");
-    case BINOP_CGT:
-        return context.builder.CreateFCmpOGT(L, R, "cmpftmp");
-    case BINOP_CEQ:
-        return context.builder.CreateFCmpOEQ(L, R, "cmpftmp");
-    case BINOP_CNE:
-        return context.builder.CreateFCmpONE(L, R, "cmpftmp");
-    }
-    return NULL;
+    Log("Binary");
+    return BinaryOperation[op](context, left, right);
 }
 
 Value *NCallFunc::codeGen(CodeGenContext &context)
@@ -149,7 +134,7 @@ Value *NCallFunc::codeGen(CodeGenContext &context)
     //         }
     //     }
     //     cout << endl;
-    //     return NULL;
+    //     return nullptr;
     // }
     // else if (funcName == "readn")
     // {
@@ -189,7 +174,7 @@ Value *NCallFunc::codeGen(CodeGenContext &context)
     // if (f->args.size() != this->args.size())
     // {
     //     cout << "function unmatched." << endl;
-    //     return NULL;
+    //     return nullptr;
     // }
 
     // vars_reserved = context.vars;
@@ -216,7 +201,7 @@ Value *NBlock::codeGen(CodeGenContext &context)
         if (i->stmt_type == STMT_TYPE_RET)
             return ret;
     }
-    return NULL;
+    return nullptr;
 }
 
 Value *NIfStmt::codeGen(CodeGenContext &context)
@@ -232,7 +217,7 @@ Value *NIfStmt::codeGen(CodeGenContext &context)
     {
         this->then->codeGen(context);
     }
-    return NULL;
+    return nullptr;
 }
 
 Value *NWhileStmt::codeGen(CodeGenContext &context)
@@ -246,13 +231,13 @@ Value *NWhileStmt::codeGen(CodeGenContext &context)
         condVal = this->Cond->codeGen(context);
         cond = ((ConstantInt *)condVal)->getLimitedValue();
     }
-    return NULL;
+    return nullptr;
 }
 
 Value *NFuncDef::codeGen(CodeGenContext &context)
 {
     context.functions[name] = this;
-    return NULL;
+    return nullptr;
 }
 
 Value *NRetStmt::codeGen(CodeGenContext &context)

@@ -12,7 +12,7 @@
 using namespace llvm;
 using namespace std;
 
-#define BINOP_EQUAL 260
+#define BINOP_ASSIGN 260
 #define BINOP_PLUS 261
 #define BINOP_MINUS 262
 #define BINOP_MUL 263
@@ -120,7 +120,7 @@ public:
     NArrayIndex(string name, NExp *idx) : NExp(TYPE_ARRIDX), arrName(name), super(NULL), index(idx) {}
     Value *codeGen(CodeGenContext &context) override;
     NArray *getArrayNode(CodeGenContext &context);
-    void modify(CodeGenContext &context, NExp *newVal);
+    Value *modify(CodeGenContext &context, NExp *newVal);
     string toString() override
     {
         return (arrName == string("") ? super->toString() : arrName) + " [ " + index->toString() + " ] ";

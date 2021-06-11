@@ -5,10 +5,10 @@ OBJS = parser.o \
 	   util.o \
 	   node.o \
        codeGen.o \
+	   binop.o \
        main.o \
 
 LLVMCONFIG = /opt/llvm/bin/llvm-config
-# LLVMCONFIG = llvm-config
 CPPFLAGS = `$(LLVMCONFIG) --cxxflags`
 LDFLAGS = `$(LLVMCONFIG) --ldflags` -lpthread -ltinfo
 LIBS = `$(LLVMCONFIG) --libs`
@@ -28,7 +28,7 @@ compiler: $(OBJS)
 	g++ -g $(CPPFLAGS) $(OBJS) $(LIBS) $(LDFLAGS) -o $@
 
 run: compiler
-	echo "a=3+5" | ./compiler
+	./compiler <test.input
 
 
 .PHONY: clean run
