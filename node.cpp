@@ -180,11 +180,14 @@ Value *NWhileStmt::codeGen(CodeGenContext &context)
 
 Value *NFuncDef::codeGen(CodeGenContext &context)
 {
+    vector<Type *> argTypes;
     context.functions[name] = this;
     return nullptr;
 }
 
 Value *NRetStmt::codeGen(CodeGenContext &context)
 {
-    return retVal->codeGen(context);
+    Value *returnVal = retVal->codeGen(context);
+    context.getCurrentBlock()->returnValue = returnVal;
+    return returnVal;
 }
