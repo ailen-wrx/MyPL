@@ -5,16 +5,20 @@ OBJS = parser.o \
 	   util.o \
 	   node.o \
        codeGen.o \
+       objGen.o \
 	   binop.o \
 	   builtin.o \
        main.o \
 
 LLVMCONFIG = /opt/llvm/bin/llvm-config
+# LLVMCONFIG = llvm-config
 CPPFLAGS = `$(LLVMCONFIG) --cxxflags`
-LDFLAGS = `$(LLVMCONFIG) --ldflags` -lpthread -ltinfo
+LDFLAGS = `$(LLVMCONFIG) --ldflags --libs` -lpthread -ltinfo -ldl -lz -lncurses -rdynamic
 LIBS = `$(LLVMCONFIG) --libs`
 
-codeGen.h: node.h
+objGen.cpp: objGen.h
+
+codeGen.cpp: codeGen.h node.h
 
 parser.cpp: parser.y codeGen.h
 	bison -d -o $@ $<

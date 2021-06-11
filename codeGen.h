@@ -9,6 +9,9 @@
 #include <llvm/IR/LLVMContext.h>
 #include <llvm/IR/IRBuilder.h>
 #include <llvm/IR/Module.h>
+#include <llvm/IR/LegacyPassManager.h>
+#include <llvm/IR/IRPrintingPasses.h>
+#include <llvm/Support/raw_ostream.h>
 #include <llvm/IR/Type.h>
 
 using namespace std;
@@ -39,12 +42,15 @@ class CodeGenContext
 public:
 	LLVMContext llvmcontext;
 	IRBuilder<> builder;
-	Module module;
+	unique_ptr<Module> module;
 
 	vector<CodeGenBlock *> blockStack;
 	map<string, NFuncDef *> functions;
 
-	CodeGenContext() : llvmcontext(), builder(llvmcontext), module("main", llvmcontext) {}
+	CodeGenContext() : llvmcontext(), builder(llvmcontext)
+	{
+		module = unique_ptr<Module>(new Module("main", this->llvmcontext));
+	}
 
 	void pushBlock(BasicBlock *block);
 	void popBlock();

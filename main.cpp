@@ -1,4 +1,5 @@
 #include "codeGen.h"
+#include "objGen.h"
 #include "parser.hpp"
 #include "binop.h"
 #include "builtin.h"
@@ -15,4 +16,6 @@ int main()
     initializeBinaryOperation();
     initializeBuiltinFunction();
     context.generateCode(*programBlock);
+    objGen(context);
+    return 0;
 }

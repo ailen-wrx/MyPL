@@ -88,7 +88,7 @@ Value *NBinOp::codeGen(CodeGenContext &context)
 Value *NCallFunc::codeGen(CodeGenContext &context)
 {
     Log("Function Call: ", this->funcName);
-    Function *calleeFunc = context.module.getFunction(this->funcName);
+    Function *calleeFunc = context.module->getFunction(this->funcName);
     if (!calleeFunc)
     {
         // TODO: search for BuiltIn methods

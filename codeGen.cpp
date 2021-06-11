@@ -69,13 +69,26 @@ void CodeGenContext::generateCode(NBlock &root)
     Log("Generating IR Code...");
 
     std::vector<Type *> sysArgs;
-    FunctionType *mainFuncType = FunctionType::get(Type::getDoubleTy(llvmcontext), sysArgs, false);
-    Function *mainFunc = Function::Create(mainFuncType, GlobalValue::ExternalLinkage, "main", &module);
-    BasicBlock *basicBlock = BasicBlock::Create(llvmcontext, "entry", mainFunc, nullptr);
-    builder.SetInsertPoint(basicBlock);
-    pushBlock(basicBlock);
-    root.codeGen(*this);
-    popBlock();
+    FunctionType *FuncType = FunctionType::get(Type::getVoidTy(this->llvmcontext), makeArrayRef(sysArgs), false);
+    BasicBlock *block = BasicBlock::Create(this->llvmcontext, "entry");
+    pushBlock(block);
 
+    Value *retValue = root.codeGen(*this);
+
+    // std::vector<Type *> mainArgs;
+    // FunctionType *mainFuncType = FunctionType::get(Type::getVoidTy(llvmcontext), makeArrayRef(sysArgs), false);
+    // Function *mainFunc = Function::Create(mainFuncType, GlobalValue::ExternalLinkage, "main", module.get());
+    // BasicBlock *basicBlock = BasicBlock::Create(llvmcontext, "entry", mainFunc, nullptr);
+    // builder.SetInsertPoint(basicBlock);
+    // pushBlock(basicBlock);
+    // root.codeGen(*this);
+    // popBlock();
+
+    popBlock();
     Log("Code Generation Success!");
+    legacy::PassManager passManager;
+    passManager.add(createPrintModulePass(outs()));
+    passManager.run(*(module.get()));
+
+    return;
 }
