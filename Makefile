@@ -6,6 +6,7 @@ OBJS = parser.o \
 	   node.o \
        codeGen.o \
 	   binop.o \
+	   builtin.o \
        main.o \
 
 LLVMCONFIG = /opt/llvm/bin/llvm-config
@@ -13,15 +14,17 @@ CPPFLAGS = `$(LLVMCONFIG) --cxxflags`
 LDFLAGS = `$(LLVMCONFIG) --ldflags` -lpthread -ltinfo
 LIBS = `$(LLVMCONFIG) --libs`
 
-lexer.l: parser.cpp
+codeGen.h: node.h
 
-parser.cpp: parser.y node.h codeGen.h
+parser.cpp: parser.y codeGen.h
 	bison -d -o $@ $<
+
+lexer.l: parser.cpp
 
 lexer.cpp: lexer.l
 	flex -o $@ $<
 
-%.o: %.cpp node.h codeGen.h
+%.o: %.cpp codeGen.h
 	g++ -g -c $(CPPFLAGS) -o $@ $<
 
 compiler: $(OBJS)
