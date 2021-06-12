@@ -58,14 +58,17 @@ Value *binaryAssign(CodeGenContext &context, NExp *left, NExp *right)
     {
         NArrayIndex *lvar = static_cast<NArrayIndex *>(left);
         NArray *targetArray = context.arrays[lvar->arrName];
-        if (targetArray->elementType == -1)
+        if (targetArray)
         {
-            targetArray->type = targetType;
-        }
-        else if (targetArray->elementType != targetType)
-        {
-            cout << "Fail to match variables." << endl;
-            break;
+            if (targetArray->elementType == -1)
+            {
+                targetArray->type = targetType;
+            }
+            else if (targetArray->elementType != targetType)
+            {
+                cout << "Fail to match variables." << endl;
+                break;
+            }
         }
 
         lvar->modify(context, rval);

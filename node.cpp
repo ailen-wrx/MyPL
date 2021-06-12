@@ -20,7 +20,8 @@ Value *NVariable::codeGen(CodeGenContext &context)
     {
         // TODO: Deal with array
     }
-    return context.builder.CreateLoad(V, false, "");
+    // return context.builder.CreateLoad(V, false, "");
+    return V;
 }
 
 Value *NDouble::codeGen(CodeGenContext &context)
@@ -67,8 +68,19 @@ Value *NArrayIndex::codeGen(CodeGenContext &context)
 
     Value *indexValue = index->codeGen(context);
 
-    ArrayRef<Value *> indices{ConstantInt::get(Type::getInt32Ty(context.llvmcontext), 0), indexValue};
-    Value *ptr = context.builder.CreateInBoundsGEP(arrPtr, indices, "elementPtr");
+    ArrayRef<Value *> ptrIndices{ConstantInt::get(Type::getInt32Ty(context.llvmcontext), 0), indexValue};
+    ArrayRef<Value *> arrIndices{indexValue};
+    Value *ptr;
+
+    // if (arrPtr->getType()->isPointerTy())
+    // {
+    ptr = context.builder.CreateInBoundsGEP(arrPtr, ptrIndices, "elementPtr");
+    // }
+    // else
+    // {
+    // arrPtr = context.builder.CreateLoad(arrPtr, "actualArrayPtr");
+    // ptr = context.builder.CreateInBoundsGEP(arrPtr, arrIndices, "elementPtr");
+    // }
 
     return context.builder.CreateAlignedLoad(ptr, MaybeAlign(4));
 }
@@ -85,9 +97,19 @@ Value *NArrayIndex::modify(CodeGenContext &context, Value *newVal)
     }
 
     Value *indexValue = index->codeGen(context);
+    ArrayRef<Value *> ptrIndices{ConstantInt::get(Type::getInt32Ty(context.llvmcontext), 0), indexValue};
+    ArrayRef<Value *> arrIndices{indexValue};
+    Value *ptr;
 
-    ArrayRef<Value *> indices{ConstantInt::get(Type::getInt32Ty(context.llvmcontext), 0), indexValue};
-    Value *ptr = context.builder.CreateInBoundsGEP(arrPtr, indices, "elementPtr");
+    // if (arrPtr->getType()->isPointerTy())
+    // {
+    ptr = context.builder.CreateInBoundsGEP(arrPtr, ptrIndices, "elementPtr");
+    // }
+    // else
+    // {
+    // arrPtr = context.builder.CreateLoad(arrPtr, "actualArrayPtr");
+    // ptr = context.builder.CreateInBoundsGEP(arrPtr, arrIndices, "elementPtr");
+    // }
 
     return context.builder.CreateAlignedStore(newVal, ptr, MaybeAlign(4));
 }
@@ -189,7 +211,14 @@ Value *NFuncDef::codeGen(CodeGenContext &context)
 {
     context.functions[name] = this;
 
-    vector<Type *> argTypes(args.size(), context.typeToLLVMType(TYPE_INT));
+    vector<Type *> argTypes;
+    for (auto i : args)
+    {
+        if (context.getType(i) == TYPE_ARR)
+            argTypes.push_back(context.typeToLLVMType(TYPE_ARR));
+        else
+            argTypes.push_back(context.typeToLLVMType(TYPE_INT));
+    }
     FunctionType *funcType = FunctionType::get(context.typeToLLVMType(TYPE_INT), argTypes, false);
     Function *f = Function::Create(funcType, GlobalValue::ExternalLinkage, name.c_str(), *context.module);
 
@@ -203,10 +232,13 @@ Value *NFuncDef::codeGen(CodeGenContext &context)
         for (auto &a : f->args())
         {
             a.setName(args[index]);
-            Value *argAlloc = context.builder.CreateAlloca(context.typeToLLVMType(TYPE_INT));
+
+            Value *argAlloc = context.builder.CreateAlloca(a.getType());
             context.builder.CreateStore(&a, argAlloc);
             context.getCurrentBlock()->localVars[args[index]] = argAlloc;
-            context.getCurrentBlock()->localVarTypes[args[index]] = TYPE_DOUBLE;
+            context.getCurrentBlock()->localVarTypes[args[index]] =
+                a.getType()->getTypeID() == Type::PointerTyID ? TYPE_ARR : TYPE_INT;
+
             index++;
         }
 

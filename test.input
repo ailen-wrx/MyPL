@@ -1,9 +1,9 @@
 extern printf();
-
-def foo(a){
-    a[0]=3;
-}
-
 a=[5];
+
+
+    a[0]=3;
+
+
 foo(a);
 printf("%d ", a[0]);
