@@ -96,9 +96,9 @@ class NArray : public NExp
 {
 public:
     vector<Value *> elements;
-    NExp *sizeExp;
-    int size;
-    NArray(NExp *e) : NExp(TYPE_ARR), sizeExp(e) {}
+    NNum *sizeExp;
+    int type;
+    NArray(NNum *e) : NExp(TYPE_ARR), sizeExp(e), type(0) {}
 
     Value *codeGen(CodeGenContext &context) override;
     string toString() override {}

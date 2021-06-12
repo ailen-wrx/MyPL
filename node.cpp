@@ -32,8 +32,11 @@ Value *NStr::codeGen(CodeGenContext &context)
 
 Value *NArray::codeGen(CodeGenContext &context)
 {
-    cout << "Invalid use of array" << endl;
-    return nullptr;
+    int arraySize = int(sizeExp->value);
+    Value *arraySizeValue = sizeExp->codeGen(context);
+    auto arrayType = ArrayType::get(context.typeToLLVMType(TYPE_NUM), arraySize);
+    Value *dst = context.builder.CreateAlloca(arrayType, arraySizeValue, "arraytmp");
+    return dst;
 }
 
 NArray *NArrayIndex::getArrayNode(CodeGenContext &context)
@@ -54,8 +57,10 @@ Value *NArrayIndex::codeGen(CodeGenContext &context)
 
     Value *indexValue = index->codeGen(context);
 
+    ArrayRef<Value *> indices(indexValue);
+
     arrPtr = context.builder.CreateLoad(arrPtr, "actualArrayPtr");
-    Value *ptr = context.builder.CreateInBoundsGEP(arrPtr, indexValue, "elementPtr");
+    Value *ptr = context.builder.CreateInBoundsGEP(arrPtr, indices, "elementPtr");
 
     return context.builder.CreateAlignedLoad(ptr, MaybeAlign(4));
 }
