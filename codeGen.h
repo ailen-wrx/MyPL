@@ -29,6 +29,7 @@ public:
 	map<string, Value *> localVars;
 	map<string, int> localVarTypes;
 	map<string, NArray *> localArrayNodes;
+	map<string, bool> isFuncArgs;
 
 	CodeGenBlock(BasicBlock *b, Value *v) : block(b), returnValue(v) {}
 

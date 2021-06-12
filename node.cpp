@@ -18,10 +18,12 @@ Value *NVariable::codeGen(CodeGenContext &context)
     }
     if (context.getType(name) == TYPE_ARR)
     {
-        // TODO: Deal with array
+        ArrayRef<Value *> indices{ConstantInt::get(Type::getInt32Ty(context.llvmcontext), 0, false)};
+        auto ptr = context.builder.CreateInBoundsGEP(V, indices, "arrayPtr");
+        return ptr;
     }
-    // return context.builder.CreateLoad(V, false, "");
-    return V;
+
+    return context.builder.CreateLoad(V, false, "");
 }
 
 Value *NDouble::codeGen(CodeGenContext &context)
@@ -68,19 +70,19 @@ Value *NArrayIndex::codeGen(CodeGenContext &context)
 
     Value *indexValue = index->codeGen(context);
 
-    ArrayRef<Value *> ptrIndices{ConstantInt::get(Type::getInt32Ty(context.llvmcontext), 0), indexValue};
-    ArrayRef<Value *> arrIndices{indexValue};
+    ArrayRef<Value *> normalIndices{ConstantInt::get(Type::getInt32Ty(context.llvmcontext), 0), indexValue};
+    ArrayRef<Value *> argIndices{indexValue};
     Value *ptr;
 
-    // if (arrPtr->getType()->isPointerTy())
-    // {
-    ptr = context.builder.CreateInBoundsGEP(arrPtr, ptrIndices, "elementPtr");
-    // }
-    // else
-    // {
-    // arrPtr = context.builder.CreateLoad(arrPtr, "actualArrayPtr");
-    // ptr = context.builder.CreateInBoundsGEP(arrPtr, arrIndices, "elementPtr");
-    // }
+    if (context.getCurrentBlock()->isFuncArgs[arrName])
+    {
+        arrPtr = context.builder.CreateLoad(arrPtr, "actualArrayPtr");
+        ptr = context.builder.CreateInBoundsGEP(arrPtr, argIndices, "elementPtr");
+    }
+    else
+    {
+        ptr = context.builder.CreateInBoundsGEP(arrPtr, normalIndices, "elementPtr");
+    }
 
     return context.builder.CreateAlignedLoad(ptr, MaybeAlign(4));
 }
@@ -97,19 +99,19 @@ Value *NArrayIndex::modify(CodeGenContext &context, Value *newVal)
     }
 
     Value *indexValue = index->codeGen(context);
-    ArrayRef<Value *> ptrIndices{ConstantInt::get(Type::getInt32Ty(context.llvmcontext), 0), indexValue};
-    ArrayRef<Value *> arrIndices{indexValue};
+    ArrayRef<Value *> normalIndices{ConstantInt::get(Type::getInt32Ty(context.llvmcontext), 0), indexValue};
+    ArrayRef<Value *> argIndices{indexValue};
     Value *ptr;
 
-    // if (arrPtr->getType()->isPointerTy())
-    // {
-    ptr = context.builder.CreateInBoundsGEP(arrPtr, ptrIndices, "elementPtr");
-    // }
-    // else
-    // {
-    // arrPtr = context.builder.CreateLoad(arrPtr, "actualArrayPtr");
-    // ptr = context.builder.CreateInBoundsGEP(arrPtr, arrIndices, "elementPtr");
-    // }
+    if (context.getCurrentBlock()->isFuncArgs[arrName])
+    {
+        arrPtr = context.builder.CreateLoad(arrPtr, "actualArrayPtr");
+        ptr = context.builder.CreateInBoundsGEP(arrPtr, argIndices, "elementPtr");
+    }
+    else
+    {
+        ptr = context.builder.CreateInBoundsGEP(arrPtr, normalIndices, "elementPtr");
+    }
 
     return context.builder.CreateAlignedStore(newVal, ptr, MaybeAlign(4));
 }
@@ -238,6 +240,7 @@ Value *NFuncDef::codeGen(CodeGenContext &context)
             context.getCurrentBlock()->localVars[args[index]] = argAlloc;
             context.getCurrentBlock()->localVarTypes[args[index]] =
                 a.getType()->getTypeID() == Type::PointerTyID ? TYPE_ARR : TYPE_INT;
+            context.getCurrentBlock()->isFuncArgs[args[index]] = true;
 
             index++;
         }
