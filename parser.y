@@ -105,7 +105,8 @@ expr:
 	| expr TMINUS expr { $$ = new NBinOp($2, $1, $3);}
 	| expr TMUL expr { $$ = new NBinOp($2, $1, $3); }
 	| expr TDIV expr { $$ = new NBinOp($2, $1, $3); }
-	| TDOUBLE { $$ = new NNum($1); }
+	| TDOUBLE { $$ = new NDouble($1); }
+	| TINT { $$ = new NInt($1); }
 	| TSTRING { $$ = new NStr(*$1); }
 	| TVAR   { $$ = new NVariable(*$1);}
 	| TLBRACE arrayelements TRBRACE { $$ = $2; }
@@ -126,6 +127,7 @@ arrayelements:
 	%empty { }
 	| TDOUBLE { }
 	| TSTRING {  }
+	| TINT { }
 	| TLBRACKET arrayelements TRBRACKET {  }
 	| arrayelements TCOMMA TDOUBLE {  }
 	| arrayelements TCOMMA TSTRING {  }
@@ -134,7 +136,7 @@ arrayelements:
 
 arraydecl: 
 	%empty { }
-	| TDOUBLE { $$ = new NArray(int($1)); }
+	| TINT { $$ = new NArray($1); }
 	;
 
 arrayindex:

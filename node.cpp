@@ -2,6 +2,11 @@
 extern map<int, Value *(*)(CodeGenContext &context, NExp *left, NExp *right)> BinaryOperation;
 extern map<string, Value *(*)(CodeGenContext &context, vector<NExp *> &args)> BuiltinFunction;
 
+bool NVariable::isDouble(CodeGenContext &context)
+{
+    return context.getCurrentBlock()->localVarTypes[name] == TYPE_DOUBLE;
+}
+
 Value *NVariable::codeGen(CodeGenContext &context)
 {
     Log("Var", name);
@@ -15,13 +20,20 @@ Value *NVariable::codeGen(CodeGenContext &context)
     {
         // TODO: Deal with array
     }
-    return context.builder.CreateLoad(V, false, "");
+    // return context.builder.CreateLoad(V, false, "");
+    return V;
 }
 
-Value *NNum::codeGen(CodeGenContext &context)
+Value *NDouble::codeGen(CodeGenContext &context)
 {
     Log("Double", value);
     return ConstantFP::get(Type::getDoubleTy(context.llvmcontext), value);
+}
+
+Value *NInt::codeGen(CodeGenContext &context)
+{
+    Log("Int", value);
+    return ConstantInt::get(Type::getInt32Ty(context.llvmcontext), value, true);
 }
 
 Value *NStr::codeGen(CodeGenContext &context)
@@ -56,15 +68,24 @@ Value *NArrayIndex::codeGen(CodeGenContext &context)
 
     Value *indexValue = index->codeGen(context);
 
-    ArrayRef<Value *> indices(indexValue);
+    ArrayRef<Value *> ptrIndices{ConstantInt::get(Type::getInt32Ty(context.llvmcontext), 0), indexValue};
+    ArrayRef<Value *> arrIndices{indexValue};
+    Value *ptr;
 
-    arrPtr = context.builder.CreateLoad(arrPtr, "actualArrayPtr");
-    Value *ptr = context.builder.CreateInBoundsGEP(arrPtr, indices, "elementPtr");
+    // if (arrPtr->getType()->isPointerTy())
+    // {
+    ptr = context.builder.CreateInBoundsGEP(arrPtr, ptrIndices, "elementPtr");
+    // }
+    // else
+    // {
+    // arrPtr = context.builder.CreateLoad(arrPtr, "actualArrayPtr");
+    // ptr = context.builder.CreateInBoundsGEP(arrPtr, arrIndices, "elementPtr");
+    // }
 
     return context.builder.CreateAlignedLoad(ptr, MaybeAlign(4));
 }
 
-Value *NArrayIndex::modify(CodeGenContext &context, NExp *newVal)
+Value *NArrayIndex::modify(CodeGenContext &context, Value *newVal)
 {
     // TODO: to check
 
@@ -76,11 +97,21 @@ Value *NArrayIndex::modify(CodeGenContext &context, NExp *newVal)
     }
 
     Value *indexValue = index->codeGen(context);
+    ArrayRef<Value *> ptrIndices{ConstantInt::get(Type::getInt32Ty(context.llvmcontext), 0), indexValue};
+    ArrayRef<Value *> arrIndices{indexValue};
+    Value *ptr;
 
-    arrPtr = context.builder.CreateLoad(arrPtr, "actualArrayPtr");
-    Value *ptr = context.builder.CreateInBoundsGEP(arrPtr, indexValue, "elementPtr");
+    // if (arrPtr->getType()->isPointerTy())
+    // {
+    ptr = context.builder.CreateInBoundsGEP(arrPtr, ptrIndices, "elementPtr");
+    // }
+    // else
+    // {
+    // arrPtr = context.builder.CreateLoad(arrPtr, "actualArrayPtr");
+    // ptr = context.builder.CreateInBoundsGEP(arrPtr, arrIndices, "elementPtr");
+    // }
 
-    return context.builder.CreateAlignedStore(newVal->codeGen(context), ptr, MaybeAlign(4));
+    return context.builder.CreateAlignedStore(newVal, ptr, MaybeAlign(4));
 }
 
 Value *NBinOp::codeGen(CodeGenContext &context)
@@ -180,8 +211,15 @@ Value *NFuncDef::codeGen(CodeGenContext &context)
 {
     context.functions[name] = this;
 
-    vector<Type *> argTypes(args.size(), context.typeToLLVMType(TYPE_DOUBLE));
-    FunctionType *funcType = FunctionType::get(context.typeToLLVMType(TYPE_DOUBLE), argTypes, false);
+    vector<Type *> argTypes;
+    for (auto i : args)
+    {
+        if (context.getType(i) == TYPE_ARR)
+            argTypes.push_back(context.typeToLLVMType(TYPE_ARR));
+        else
+            argTypes.push_back(context.typeToLLVMType(TYPE_INT));
+    }
+    FunctionType *funcType = FunctionType::get(context.typeToLLVMType(TYPE_INT), argTypes, false);
     Function *f = Function::Create(funcType, GlobalValue::ExternalLinkage, name.c_str(), *context.module);
 
     if (!isExternal)
@@ -194,10 +232,13 @@ Value *NFuncDef::codeGen(CodeGenContext &context)
         for (auto &a : f->args())
         {
             a.setName(args[index]);
-            Value *argAlloc = context.builder.CreateAlloca(context.typeToLLVMType(TYPE_DOUBLE));
+
+            Value *argAlloc = context.builder.CreateAlloca(a.getType());
             context.builder.CreateStore(&a, argAlloc);
             context.getCurrentBlock()->localVars[args[index]] = argAlloc;
-            context.getCurrentBlock()->localVarTypes[args[index]] = TYPE_DOUBLE;
+            context.getCurrentBlock()->localVarTypes[args[index]] =
+                a.getType()->getTypeID() == Type::PointerTyID ? TYPE_ARR : TYPE_INT;
+
             index++;
         }
 

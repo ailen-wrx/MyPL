@@ -52,7 +52,7 @@ Type *CodeGenContext::typeToLLVMType(int T)
     {
     case (TYPE_INT):
     {
-        ret = Type::getInt8Ty(llvmcontext);
+        ret = Type::getInt32Ty(llvmcontext);
         break;
     }
     case (TYPE_DOUBLE):
@@ -67,7 +67,7 @@ Type *CodeGenContext::typeToLLVMType(int T)
     }
     case (TYPE_ARR):
     {
-        ret = Type::getDoublePtrTy(llvmcontext);
+        ret = Type::getInt32PtrTy(llvmcontext);
         break;
     }
     }

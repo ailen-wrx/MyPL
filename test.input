@@ -3,6 +3,10 @@ x=3;
 printf("%g  ", x);
 
 a=[5];
-a[0]=4;
-printf("%g  ",a[0]);
-printf("%g  ",a[0]);
+
+
+    a[0]=3;
+
+
+foo(a);
+printf("%d ", a[0]);
