@@ -158,6 +158,26 @@ Value *binaryCne(CodeGenContext &context, NExp *left, NExp *right)
     else
         return context.builder.CreateICmpNE(left->codeGen(context), right->codeGen(context), "cmptmp");
 }
+Value *binaryAnd(CodeGenContext &context, NExp *left, NExp *right)
+{
+    if (left->isDouble(context) || right->isDouble(context))
+    {
+        cout << "Type Error" << endl;
+        return nullptr;
+    }
+    else
+        return context.builder.CreateAnd(left->codeGen(context), right->codeGen(context), "andtmp");
+}
+Value *binaryOr(CodeGenContext &context, NExp *left, NExp *right)
+{
+    if (left->isDouble(context) || right->isDouble(context))
+    {
+        cout << "Type Error" << endl;
+        return nullptr;
+    }
+    else
+        return context.builder.CreateOr(left->codeGen(context), right->codeGen(context), "ortmp");
+}
 
 void initializeBinaryOperation()
 {
@@ -170,6 +190,6 @@ void initializeBinaryOperation()
     BinaryOperation[BINOP_CLE] = binaryCle;
     BinaryOperation[BINOP_CGE] = binaryCge;
     BinaryOperation[BINOP_CGT] = binaryCgt;
-    BinaryOperation[BINOP_CEQ] = binaryCeq;
-    BinaryOperation[BINOP_CNE] = binaryCne;
+    BinaryOperation[BINOP_AND] = binaryAnd;
+    BinaryOperation[BINOP_OR] = binaryOr;
 }
