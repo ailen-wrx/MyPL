@@ -26,13 +26,14 @@ using namespace std;
 #define BINOP_CGE 271
 
 #define TYPE_VAR 1
-#define TYPE_NUM 2
-#define TYPE_STR 3
-#define TYPE_ARR 4
-#define TYPE_BINOP 5
-#define TYPE_CALL 6
-#define TYPE_ARRIDX 7
-#define TYPE_IDENTIFIER 8
+#define TYPE_INT 2
+#define TYPE_DOUBLE 3
+#define TYPE_STR 4
+#define TYPE_ARR 5
+#define TYPE_BINOP 6
+#define TYPE_CALL 7
+#define TYPE_ARRIDX 8
+#define TYPE_IDENTIFIER 9
 
 #define STMT_TYPE_EXP 11
 #define STMT_TYPE_IF 12
