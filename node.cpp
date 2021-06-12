@@ -32,9 +32,8 @@ Value *NStr::codeGen(CodeGenContext &context)
 
 Value *NArray::codeGen(CodeGenContext &context)
 {
-    int arraySize = int(sizeExp->value);
-    Value *arraySizeValue = sizeExp->codeGen(context);
-    auto arrayType = ArrayType::get(context.typeToLLVMType(TYPE_NUM), arraySize);
+    Value *arraySizeValue = ConstantInt::get(Type::getInt32Ty(context.llvmcontext), size);
+    auto arrayType = ArrayType::get(context.typeToLLVMType(TYPE_NUM), size);
     Value *dst = context.builder.CreateAlloca(arrayType, arraySizeValue, "arraytmp");
     return dst;
 }

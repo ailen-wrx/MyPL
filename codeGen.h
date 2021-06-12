@@ -46,6 +46,7 @@ public:
 
 	vector<CodeGenBlock *> blockStack;
 	map<string, NFuncDef *> functions;
+	map<string, NArray *> arrays;
 
 	CodeGenContext() : llvmcontext(), builder(llvmcontext)
 	{

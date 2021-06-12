@@ -60,6 +60,11 @@ Type *CodeGenContext::typeToLLVMType(int T)
         ret = Type::getInt8PtrTy(llvmcontext);
         break;
     }
+    case (TYPE_ARR):
+    {
+        ret = Type::getDoublePtrTy(llvmcontext);
+        break;
+    }
     }
     return ret;
 }

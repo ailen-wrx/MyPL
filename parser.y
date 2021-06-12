@@ -132,12 +132,12 @@ arrayelements:
 
 arraydecl: 
 	%empty { }
-	| TNUMBER { $$ = new NArray($1); }
+	| TNUMBER { $$ = new NArray(int($1)); }
 	;
 
 arrayindex:
 	TVAR TLBRACKET expr TRBRACKET { $$ = new NArrayIndex(*$1, $3); }
-	| arrayindex TLBRACKET expr TRBRACKET { $$ = new NArrayIndex($1, $3); }
+	| arrayindex TLBRACKET expr TRBRACKET { }
 	;
 
 callfunc:

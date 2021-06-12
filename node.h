@@ -96,29 +96,28 @@ class NArray : public NExp
 {
 public:
     vector<Value *> elements;
-    NNum *sizeExp;
-    int type;
-    NArray(NNum *e) : NExp(TYPE_ARR), sizeExp(e), type(0) {}
+    int size;
+    int elementType;
+    NArray(int s) : NExp(TYPE_ARR), size(s), elementType(-1) {}
 
     Value *codeGen(CodeGenContext &context) override;
-    string toString() override {}
+    string toString() override { return ""; }
 };
 
 class NArrayIndex : public NExp
 {
 public:
     string arrName;
-    NArrayIndex *super;
+    NArray *array;
     NExp *index;
 
-    NArrayIndex(NArrayIndex *s, NExp *idx) : NExp(TYPE_ARRIDX), arrName(""), super(s), index(idx) {}
-    NArrayIndex(string name, NExp *idx) : NExp(TYPE_ARRIDX), arrName(name), super(NULL), index(idx) {}
+    NArrayIndex(string name, NExp *idx) : NExp(TYPE_ARRIDX), arrName(name), array(nullptr), index(idx) {}
     Value *codeGen(CodeGenContext &context) override;
     NArray *getArrayNode(CodeGenContext &context);
     Value *modify(CodeGenContext &context, NExp *newVal);
     string toString() override
     {
-        return (arrName == string("") ? super->toString() : arrName) + " [ " + index->toString() + " ] ";
+        return arrName + " [ " + index->toString() + " ] ";
     }
 };
 
