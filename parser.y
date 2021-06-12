@@ -33,7 +33,7 @@ extern int yylex();
 
 %token <str> TVAR TSTRING
 %token <token> TEQUAL TPLUS TMINUS TMUL TDIV TMOD
-%token <token> TCEQ TCNE TCLT TCLE TCGT TCGE 
+%token <token> TCEQ TCNE TCLT TCLE TCGT TCGE TAND TOR
 %token <token> TIF TELSE TFOR TRETURN TDEF TWHILE TEXTERN
 %token <token> TLPAREN TRPAREN TLBRACE TRBRACE TLBRACKET TRBRACKET TCOMMA TCOLON TSEMICOLON
 %token <number> TDOUBLE
@@ -55,6 +55,7 @@ extern int yylex();
 %left TPLUS TMINUS
 %left TMUL TDIV
 %left TCEQ TCNE TCLT TCLE TCGT TCGE 
+%left TAND TOR
 
 %start program
 
@@ -117,10 +118,12 @@ expr:
 
 boolexpr:
 	expr comparison expr { $$ = new NBinOp($2, $1, $3); }
+	| boolexpr TAND boolexpr { $$ = new NBinOp($2, $1, $3); }
+	| boolexpr TOR boolexpr { $$ = new NBinOp($2, $1, $3); }
 	;
 
 comparison:
-	TCEQ | TCNE | TCLT | TCLE | TCGT | TCGE
+	TCEQ | TCNE | TCLT | TCLE | TCGT | TCGE | TAND | TOR
 	;
 
 arrayelements: 
