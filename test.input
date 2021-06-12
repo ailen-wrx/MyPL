@@ -1,9 +1,11 @@
 extern printf();
-a=2;
-b=1;
-if (a>0 and b>1)
-{
-    printf("true");
-} else {
-    printf("false");
+a=[5];
+def foo(){
+    printf("%d  ",a[1]);
+    a[1]=2;
+    printf("%d  ",a[1]);
 }
+a[1]=1;
+printf("%d  ",a[1]);
+foo();
+printf("%d  ",a[1]);
