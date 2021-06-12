@@ -1,3 +1,20 @@
 extern printf();
-a=4.5;
-printf("%g", 3.0);
+a=4;
+def foo(x) {
+    printf(" ");
+    printf("foo %g ",5);
+    printf("foo %g ",5);
+
+}
+printf("a: %g %g ", 1.0, 2.0);
+a=5;
+foo(a);
+printf("b: %g ", 3.0);
+printf("c: %g ", 4.0);
+
+if (a>1) {
+    printf("d: %g ", a);
+
+} else {
+    printf("%s", "false");
+}
