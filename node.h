@@ -78,7 +78,17 @@ class NNum : public NExp
 {
 public:
     double value;
-    NNum(double v) : NExp(TYPE_NUM), value(v) {}
+    NNum(double v) : NExp(TYPE_DOUBLE), value(v) {}
+
+    Value *codeGen(CodeGenContext &context) override;
+    string toString() override { return to_string(value); };
+};
+
+class NInt : public NExp
+{
+public:
+    int value;
+    NInt(int v) : NExp(TYPE_INT), value(v) {}
 
     Value *codeGen(CodeGenContext &context) override;
     string toString() override { return to_string(value); };

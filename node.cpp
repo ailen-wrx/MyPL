@@ -33,7 +33,7 @@ Value *NStr::codeGen(CodeGenContext &context)
 Value *NArray::codeGen(CodeGenContext &context)
 {
     Value *arraySizeValue = ConstantInt::get(Type::getInt32Ty(context.llvmcontext), size);
-    auto arrayType = ArrayType::get(context.typeToLLVMType(TYPE_NUM), size);
+    auto arrayType = ArrayType::get(context.typeToLLVMType(TYPE_INT), size);
     Value *dst = context.builder.CreateAlloca(arrayType, arraySizeValue, "arraytmp");
     return dst;
 }
@@ -180,8 +180,8 @@ Value *NFuncDef::codeGen(CodeGenContext &context)
 {
     context.functions[name] = this;
 
-    vector<Type *> argTypes(args.size(), context.typeToLLVMType(TYPE_NUM));
-    FunctionType *funcType = FunctionType::get(context.typeToLLVMType(TYPE_NUM), argTypes, false);
+    vector<Type *> argTypes(args.size(), context.typeToLLVMType(TYPE_DOUBLE));
+    FunctionType *funcType = FunctionType::get(context.typeToLLVMType(TYPE_DOUBLE), argTypes, false);
     Function *f = Function::Create(funcType, GlobalValue::ExternalLinkage, name.c_str(), *context.module);
 
     if (!isExternal)
@@ -194,10 +194,10 @@ Value *NFuncDef::codeGen(CodeGenContext &context)
         for (auto &a : f->args())
         {
             a.setName(args[index]);
-            Value *argAlloc = context.builder.CreateAlloca(context.typeToLLVMType(TYPE_NUM));
+            Value *argAlloc = context.builder.CreateAlloca(context.typeToLLVMType(TYPE_DOUBLE));
             context.builder.CreateStore(&a, argAlloc);
             context.getCurrentBlock()->localVars[args[index]] = argAlloc;
-            context.getCurrentBlock()->localVarTypes[args[index]] = TYPE_NUM;
+            context.getCurrentBlock()->localVarTypes[args[index]] = TYPE_DOUBLE;
             index++;
         }
 
