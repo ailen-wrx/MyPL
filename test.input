@@ -4,9 +4,13 @@ printf("%g  ", x);
 
 a=[5];
 
+def foo(a){
+    printf("%d ", a[1]);
+    a[1]=4;
+    printf("%d ", a[1]);
+}
 
-    a[0]=3;
-
-
+a[1]=5;
+printf("%d ", a[1]);
 foo(a);
-printf("%d ", a[0]);
+printf("%d ", a[1]);
