@@ -1,16 +1,9 @@
 extern printf();
-x=3;
-printf("%g  ", x);
-
-a=[5];
-
-def foo(a){
-    printf("%d ", a[1]);
-    a[1]=4;
-    printf("%d ", a[1]);
+a=2;
+b=1;
+if (a>0 and b>1)
+{
+    printf("true");
+} else {
+    printf("false");
 }
-
-a[1]=5;
-printf("%d ", a[1]);
-foo(a);
-printf("%d ", a[1]);

@@ -24,6 +24,8 @@ using namespace std;
 #define BINOP_CLE 269
 #define BINOP_CGT 270
 #define BINOP_CGE 271
+#define BINOP_AND 272
+#define BINOP_OR 273
 
 #define TYPE_VAR 1
 #define TYPE_INT 2
