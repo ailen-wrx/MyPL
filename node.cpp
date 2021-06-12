@@ -49,6 +49,7 @@ Value *NArray::codeGen(CodeGenContext &context)
     Value *arraySizeValue = ConstantInt::get(Type::getInt32Ty(context.llvmcontext), size);
     auto arrayType = ArrayType::get(context.typeToLLVMType(TYPE_INT), size);
     Value *dst = context.builder.CreateAlloca(arrayType, arraySizeValue, "arraytmp");
+    // Value *dst = new GlobalVariable(arrayType, false, GlobalValue::CommonLinkage);
     return dst;
 }
 
@@ -235,7 +236,12 @@ Value *NFuncDef::codeGen(CodeGenContext &context)
         {
             a.setName(args[index]);
 
-            Value *argAlloc = context.builder.CreateAlloca(a.getType());
+            Value *argAlloc;
+            if (context.getType(args[index]) == TYPE_ARR)
+                argAlloc = context.builder.CreateAlloca(PointerType::getInt32PtrTy(context.llvmcontext));
+            else
+                argAlloc = context.builder.CreateAlloca(a.getType());
+
             context.builder.CreateStore(&a, argAlloc);
             context.getCurrentBlock()->localVars[args[index]] = argAlloc;
             context.getCurrentBlock()->localVarTypes[args[index]] =
