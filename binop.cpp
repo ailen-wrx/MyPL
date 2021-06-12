@@ -4,17 +4,48 @@ map<int, Value *(*)(CodeGenContext &context, NExp *left, NExp *right)> BinaryOpe
 
 Value *binaryAssign(CodeGenContext &context, NExp *left, NExp *right)
 {
-    Type *type = context.typeToLLVMType(right->type);
+    switch (left->type)
+    {
+    case TYPE_VAR:
+    {
+        NVariable *lvar = static_cast<NVariable *>(left);
+        auto a = context.getType(lvar->name);
+        if (a == -1)
+        {
+            Type *type = context.typeToLLVMType(right->type);
+            Value *inst = context.builder.CreateAlloca(type);
+            context.blockStack.back()->localVars[lvar->name] = inst;
+            context.blockStack.back()->localVarTypes[lvar->name] = right->type;
+            Value *rvar = right->codeGen(context);
+            context.builder.CreateStore(rvar, inst);
+            // context.builder.CreateLoad(inst);
+            return inst;
+        }
+        else
+        {
+            if (a != right->type)
+            {
+                cout << "Fail to match variables." << endl;
+                break;
+            }
+            Value *dst = context.getSymbolValue(lvar->name);
+            Value *rvar = right->codeGen(context);
+            context.builder.CreateStore(rvar, dst);
+            return dst;
+        }
+        break;
+    }
+
+    case TYPE_ARRIDX:
+    {
+        break;
+    }
+
+    default:
+        break;
+    }
+
     //TODO: right->type bug(BinOp).
-    Value *dst = context.builder.CreateAlloca(type);
-
-    NVariable *lvar = static_cast<NVariable *>(left);
-    context.getCurrentBlock()->localVars[lvar->name] = dst;
-    context.getCurrentBlock()->localVarTypes[lvar->name] = right->type;
-
-    /* Valid Code */
-    context.builder.CreateStore(right->codeGen(context), dst);
-    return dst;
 }
 
 Value *binaryPlus(CodeGenContext &context, NExp *left, NExp *right)
