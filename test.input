@@ -1,4 +1,7 @@
 extern printf();
+x=3;
+printf("%g  ", x);
+
 a=[5];
 
 def foo(a){
