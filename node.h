@@ -95,17 +95,13 @@ public:
 class NArray : public NExp
 {
 public:
-    vector<NExp *> elements;
-    NArray() : NExp(TYPE_ARR) {}
+    vector<Value *> elements;
+    NExp *sizeExp;
+    int size;
+    NArray(NExp *e) : NExp(TYPE_ARR), sizeExp(e) {}
 
     Value *codeGen(CodeGenContext &context) override;
-    string toString() override
-    {
-        string ret = "";
-        for (auto i : elements)
-            ret += i->toString();
-        return ret;
-    }
+    string toString() override {}
 };
 
 class NArrayIndex : public NExp

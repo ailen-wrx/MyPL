@@ -14,4 +14,3 @@ parser.hpp
 parser.tab.c
 parser.output
 parser.tab.h
-test.input

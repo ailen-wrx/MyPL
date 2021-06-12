@@ -121,18 +121,18 @@ comparison:
 	;
 
 arrayelements: 
-	%empty { $$ = new NArray(); }
-	| TNUMBER { $$ = new NArray(); $$->elements.push_back(new NNum($1)); }
-	| TSTRING { $$ = new NArray(); $$->elements.push_back(new NStr(*$1)); }
-	| TLBRACKET arrayelements TRBRACKET { $$ = new NArray(); $$->elements.push_back($2); }
-	| arrayelements TCOMMA TNUMBER { $$ = $1; $$->elements.push_back(new NNum($3)); }
-	| arrayelements TCOMMA TSTRING { $$ = $1; $$->elements.push_back(new NStr(*$3)); }
-	| arrayelements TCOMMA TLBRACKET arrayelements TRBRACKET { $$ = $1; $$->elements.push_back($4); }
+	%empty { }
+	| TNUMBER { }
+	| TSTRING {  }
+	| TLBRACKET arrayelements TRBRACKET {  }
+	| arrayelements TCOMMA TNUMBER {  }
+	| arrayelements TCOMMA TSTRING {  }
+	| arrayelements TCOMMA TLBRACKET arrayelements TRBRACKET {  }
 	;
 
 arraydecl: 
-	%empty { $$ = new NArray(); }
-	| TNUMBER { $$ = new NArray(); }
+	%empty { }
+	| TNUMBER { $$ = new NArray($1); }
 	;
 
 arrayindex:
