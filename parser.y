@@ -80,7 +80,7 @@ blk:
 
 funcdef: 
 	TDEF TVAR TLPAREN funcargs TRPAREN blk	{ $$ = new NFuncDef(*$2,$4,$6);}
-	| TEXTERN TVAR TLPAREN funcargs TRPAREN TSEMICOLON {  }
+	| TEXTERN TVAR TLPAREN funcargs TRPAREN TSEMICOLON { $$ = new NFuncDef(*$2,$4); }
 	;
 
 funcargs: 

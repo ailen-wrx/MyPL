@@ -34,11 +34,15 @@ lexer.cpp: lexer.l
 compiler: $(OBJS)
 	g++ -g $(CPPFLAGS) $(OBJS) $(LIBS) $(LDFLAGS) -o $@
 
+
+.PHONY: clean run output
+
+output: output.o
+	g++ output.o -o output -no-pie && ./output
+
 run: compiler
 	./compiler <test.input
 
-
-.PHONY: clean run
 clean:
 	rm -f parser.cpp parser.hpp lexer.cpp *.o compiler
 	
