@@ -67,15 +67,13 @@ Value *NArrayIndex::codeGen(CodeGenContext &context)
 
     Value *indexValue = index->codeGen(context);
 
-    ArrayRef<Value *> indices(indexValue);
-
-    arrPtr = context.builder.CreateLoad(arrPtr, "actualArrayPtr");
+    ArrayRef<Value *> indices{ConstantInt::get(Type::getInt32Ty(context.llvmcontext), 0), indexValue};
     Value *ptr = context.builder.CreateInBoundsGEP(arrPtr, indices, "elementPtr");
 
     return context.builder.CreateAlignedLoad(ptr, MaybeAlign(4));
 }
 
-Value *NArrayIndex::modify(CodeGenContext &context, NExp *newVal)
+Value *NArrayIndex::modify(CodeGenContext &context, Value *newVal)
 {
     // TODO: to check
 
@@ -88,10 +86,10 @@ Value *NArrayIndex::modify(CodeGenContext &context, NExp *newVal)
 
     Value *indexValue = index->codeGen(context);
 
-    arrPtr = context.builder.CreateLoad(arrPtr, "actualArrayPtr");
-    Value *ptr = context.builder.CreateInBoundsGEP(arrPtr, indexValue, "elementPtr");
+    ArrayRef<Value *> indices{ConstantInt::get(Type::getInt32Ty(context.llvmcontext), 0), indexValue};
+    Value *ptr = context.builder.CreateInBoundsGEP(arrPtr, indices, "elementPtr");
 
-    return context.builder.CreateAlignedStore(newVal->codeGen(context), ptr, MaybeAlign(4));
+    return context.builder.CreateAlignedStore(newVal, ptr, MaybeAlign(4));
 }
 
 Value *NBinOp::codeGen(CodeGenContext &context)

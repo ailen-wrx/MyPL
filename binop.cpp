@@ -9,10 +9,6 @@ Value *binaryAssign(CodeGenContext &context, NExp *left, NExp *right)
     {
     case TYPE_BINOP:
     case TYPE_CALL:
-    {
-        targetType = TYPE_DOUBLE;
-        break;
-    }
     case TYPE_ARRIDX:
     {
         targetType = TYPE_INT;
@@ -34,16 +30,16 @@ Value *binaryAssign(CodeGenContext &context, NExp *left, NExp *right)
 
             if (targetType == TYPE_ARR)
             {
-                // context.getCurrentBlock()->localVars[lvar->name] = rval;
+                context.getCurrentBlock()->localVars[lvar->name] = rval;
                 context.arrays[lvar->name] = (NArray *)right;
             }
-            // else
-            // {
-            Type *type = context.typeToLLVMType(right->type);
-            dst = context.builder.CreateAlloca(type);
-            context.getCurrentBlock()->localVars[lvar->name] = dst;
-            context.builder.CreateStore(rval, dst);
-            // }
+            else
+            {
+                Type *type = context.typeToLLVMType(targetType);
+                dst = context.builder.CreateAlloca(type);
+                context.getCurrentBlock()->localVars[lvar->name] = dst;
+                context.builder.CreateStore(rval, dst);
+            }
         }
         else
         {
@@ -72,8 +68,7 @@ Value *binaryAssign(CodeGenContext &context, NExp *left, NExp *right)
             break;
         }
 
-        dst = lvar->codeGen(context);
-        context.builder.CreateStore(rval, dst);
+        lvar->modify(context, rval);
         break;
     }
 

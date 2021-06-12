@@ -143,14 +143,14 @@ public:
     NArrayIndex(string name, NExp *idx) : NExp(TYPE_ARRIDX), arrName(name), array(nullptr), index(idx) {}
     Value *codeGen(CodeGenContext &context) override;
     NArray *getArrayNode(CodeGenContext &context);
-    Value *modify(CodeGenContext &context, NExp *newVal);
+    Value *modify(CodeGenContext &context, Value *newVal);
     string toString() override
     {
         return arrName + " [ " + index->toString() + " ] ";
     }
     bool isDouble(CodeGenContext &context) override
     {
-        return array->isDouble(context);
+        return false;
     }
 };
 
