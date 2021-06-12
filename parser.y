@@ -25,7 +25,7 @@ extern int yylex();
 	NStmt* stmt;
 	NExp* exp;
 	std::string* str;
-    double doubleval;
+    double number;
 	int intval;
 	char ch;
 	int token;
@@ -36,7 +36,7 @@ extern int yylex();
 %token <token> TCEQ TCNE TCLT TCLE TCGT TCGE 
 %token <token> TIF TELSE TFOR TRETURN TDEF TWHILE TEXTERN
 %token <token> TLPAREN TRPAREN TLBRACE TRBRACE TLBRACKET TRBRACKET TCOMMA TCOLON TSEMICOLON
-%token <doubleval> TDOUBLE
+%token <number> TDOUBLE
 %token <intval> TINT
 %token <ch> TCHAR
 
@@ -105,7 +105,8 @@ expr:
 	| expr TMINUS expr { $$ = new NBinOp($2, $1, $3);}
 	| expr TMUL expr { $$ = new NBinOp($2, $1, $3); }
 	| expr TDIV expr { $$ = new NBinOp($2, $1, $3); }
-	| TNUMBER { $$ = new NNum($1); }
+	| TDOUBLE { $$ = new NDouble($1); }
+	| TINT { $$ = new NInt($1); }
 	| TSTRING { $$ = new NStr(*$1); }
 	| TVAR   { $$ = new NVariable(*$1);}
 	| TLBRACE arrayelements TRBRACE { $$ = $2; }
@@ -124,17 +125,18 @@ comparison:
 
 arrayelements: 
 	%empty { }
-	| TNUMBER { }
+	| TDOUBLE { }
 	| TSTRING {  }
+	| TINT { }
 	| TLBRACKET arrayelements TRBRACKET {  }
-	| arrayelements TCOMMA TNUMBER {  }
+	| arrayelements TCOMMA TDOUBLE {  }
 	| arrayelements TCOMMA TSTRING {  }
 	| arrayelements TCOMMA TLBRACKET arrayelements TRBRACKET {  }
 	;
 
 arraydecl: 
 	%empty { }
-	| TNUMBER { $$ = new NArray(int($1)); }
+	| TINT { $$ = new NArray($1); }
 	;
 
 arrayindex:

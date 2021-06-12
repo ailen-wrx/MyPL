@@ -62,6 +62,7 @@ class NExp : public NStmt
 public:
     int type;
     NExp(int t) : NStmt(STMT_TYPE_EXP), type(t) {}
+    virtual bool isDouble(CodeGenContext &context) { return false; }
 };
 
 class NVariable : public NExp
@@ -72,16 +73,35 @@ public:
 
     Value *codeGen(CodeGenContext &context) override;
     string toString() override { return name; };
+    bool isDouble(CodeGenContext &context) override;
 };
 
-class NNum : public NExp
+class NDouble : public NExp
 {
 public:
     double value;
-    NNum(double v) : NExp(TYPE_NUM), value(v) {}
+    NDouble(double v) : NExp(TYPE_DOUBLE), value(v) {}
 
     Value *codeGen(CodeGenContext &context) override;
     string toString() override { return to_string(value); };
+    bool isDouble(CodeGenContext &context) override
+    {
+        return true;
+    }
+};
+
+class NInt : public NExp
+{
+public:
+    int value;
+    NInt(int v) : NExp(TYPE_INT), value(v) {}
+
+    Value *codeGen(CodeGenContext &context) override;
+    string toString() override { return to_string(value); };
+    bool isDouble(CodeGenContext &context) override
+    {
+        return false;
+    }
 };
 
 class NStr : public NExp
@@ -91,6 +111,10 @@ public:
     NStr(string v) : NExp(TYPE_STR), value(v.substr(1, v.length() - 2)) {}
     Value *codeGen(CodeGenContext &context) override;
     string toString() override { return value; };
+    bool isDouble(CodeGenContext &context) override
+    {
+        return false;
+    }
 };
 
 class NArray : public NExp
@@ -103,6 +127,10 @@ public:
 
     Value *codeGen(CodeGenContext &context) override;
     string toString() override { return ""; }
+    bool isDouble(CodeGenContext &context) override
+    {
+        return elementType == TYPE_DOUBLE;
+    }
 };
 
 class NArrayIndex : public NExp
@@ -120,6 +148,10 @@ public:
     {
         return arrName + " [ " + index->toString() + " ] ";
     }
+    bool isDouble(CodeGenContext &context) override
+    {
+        return array->isDouble(context);
+    }
 };
 
 class NBinOp : public NExp
@@ -134,6 +166,10 @@ public:
     {
         return left->toString() + " " + to_string(op) + " " + right->toString();
     };
+    bool isDouble(CodeGenContext &context) override
+    {
+        return left->isDouble(context) || right->isDouble(context);
+    }
 };
 
 class NCallFunc : public NExp

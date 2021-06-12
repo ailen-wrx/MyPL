@@ -2,6 +2,11 @@
 extern map<int, Value *(*)(CodeGenContext &context, NExp *left, NExp *right)> BinaryOperation;
 extern map<string, Value *(*)(CodeGenContext &context, vector<NExp *> &args)> BuiltinFunction;
 
+bool NVariable::isDouble(CodeGenContext &context)
+{
+    return context.getCurrentBlock()->localVarTypes[name] == TYPE_DOUBLE;
+}
+
 Value *NVariable::codeGen(CodeGenContext &context)
 {
     Log("Var", name);
@@ -18,10 +23,16 @@ Value *NVariable::codeGen(CodeGenContext &context)
     return context.builder.CreateLoad(V, false, "");
 }
 
-Value *NNum::codeGen(CodeGenContext &context)
+Value *NDouble::codeGen(CodeGenContext &context)
 {
     Log("Double", value);
     return ConstantFP::get(Type::getDoubleTy(context.llvmcontext), value);
+}
+
+Value *NInt::codeGen(CodeGenContext &context)
+{
+    Log("Int", value);
+    return ConstantInt::get(Type::getInt32Ty(context.llvmcontext), value, true);
 }
 
 Value *NStr::codeGen(CodeGenContext &context)
@@ -33,7 +44,7 @@ Value *NStr::codeGen(CodeGenContext &context)
 Value *NArray::codeGen(CodeGenContext &context)
 {
     Value *arraySizeValue = ConstantInt::get(Type::getInt32Ty(context.llvmcontext), size);
-    auto arrayType = ArrayType::get(context.typeToLLVMType(TYPE_NUM), size);
+    auto arrayType = ArrayType::get(context.typeToLLVMType(TYPE_INT), size);
     Value *dst = context.builder.CreateAlloca(arrayType, arraySizeValue, "arraytmp");
     return dst;
 }
@@ -180,8 +191,8 @@ Value *NFuncDef::codeGen(CodeGenContext &context)
 {
     context.functions[name] = this;
 
-    vector<Type *> argTypes(args.size(), context.typeToLLVMType(TYPE_NUM));
-    FunctionType *funcType = FunctionType::get(context.typeToLLVMType(TYPE_NUM), argTypes, false);
+    vector<Type *> argTypes(args.size(), context.typeToLLVMType(TYPE_INT));
+    FunctionType *funcType = FunctionType::get(context.typeToLLVMType(TYPE_INT), argTypes, false);
     Function *f = Function::Create(funcType, GlobalValue::ExternalLinkage, name.c_str(), *context.module);
 
     if (!isExternal)
@@ -194,10 +205,10 @@ Value *NFuncDef::codeGen(CodeGenContext &context)
         for (auto &a : f->args())
         {
             a.setName(args[index]);
-            Value *argAlloc = context.builder.CreateAlloca(context.typeToLLVMType(TYPE_NUM));
+            Value *argAlloc = context.builder.CreateAlloca(context.typeToLLVMType(TYPE_INT));
             context.builder.CreateStore(&a, argAlloc);
             context.getCurrentBlock()->localVars[args[index]] = argAlloc;
-            context.getCurrentBlock()->localVarTypes[args[index]] = TYPE_NUM;
+            context.getCurrentBlock()->localVarTypes[args[index]] = TYPE_DOUBLE;
             index++;
         }
 

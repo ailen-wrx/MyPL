@@ -30,8 +30,8 @@ using namespace std;
 "def"                   puts("TDEF"); return TOKEN(TDEF);
 "extern"                puts("TEXTERN"); return TOKEN(TEXTERN);
 [a-zA-Z_][a-zA-Z0-9_]*  puts("TVAR"); {yylval.str = new string(yytext); return TVAR; }
-[0-9]+\.[0-9]*          puts("TDOUBLE"); {sscanf(yytext,"%lf",&(yylval.doubleval)); return TDOUBLE; }
-[0-9]+                  puts("TINT"); {sscanf(yytext,"%lf",&(yylval.intval)); return TINT; }
+[0-9]+\.[0-9]*          puts("TDOUBLE"); {sscanf(yytext,"%lf",&(yylval.number)); return TDOUBLE; }
+[0-9]+                  puts("TINT"); {sscanf(yytext,"%d",&(yylval.intval)); return TINT; }
 \"(\\.|[^"])*\"         puts("TSTRING"); {yylval.str = new string(yytext); return TSTRING; }
 \'(\\.|[^"])\'          puts("TCHAR"); {yylval.ch = yytext[1]; return TCHAR; }
 "+"                     puts("TPLUS"); return TOKEN(TPLUS);
