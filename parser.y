@@ -25,7 +25,8 @@ extern int yylex();
 	NStmt* stmt;
 	NExp* exp;
 	std::string* str;
-    double number;
+    double doubleval;
+	int intval;
 	char ch;
 	int token;
 }
@@ -35,7 +36,8 @@ extern int yylex();
 %token <token> TCEQ TCNE TCLT TCLE TCGT TCGE 
 %token <token> TIF TELSE TFOR TRETURN TDEF TWHILE TEXTERN
 %token <token> TLPAREN TRPAREN TLBRACE TRBRACE TLBRACKET TRBRACKET TCOMMA TCOLON TSEMICOLON
-%token <number> TNUMBER
+%token <doubleval> TDOUBLE
+%token <intval> TINT
 %token <ch> TCHAR
 
 %type <block> program stmts blk

@@ -50,7 +50,12 @@ Type *CodeGenContext::typeToLLVMType(int T)
     Type *ret = nullptr;
     switch (T)
     {
-    case (TYPE_NUM):
+    case (TYPE_INT):
+    {
+        ret = Type::getInt8Ty(llvmcontext);
+        break;
+    }
+    case (TYPE_DOUBLE):
     {
         ret = Type::getDoubleTy(llvmcontext);
         break;
