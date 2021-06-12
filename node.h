@@ -87,8 +87,7 @@ class NStr : public NExp
 {
 public:
     string value;
-    NStr(string v) : NExp(TYPE_STR), value(v) {}
-
+    NStr(string v) : NExp(TYPE_STR), value(v.substr(1, v.length() - 2)) {}
     Value *codeGen(CodeGenContext &context) override;
     string toString() override { return value; };
 };

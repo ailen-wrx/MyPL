@@ -13,7 +13,7 @@ Value *binaryAssign(CodeGenContext &context, NExp *left, NExp *right)
     context.getCurrentBlock()->localVarTypes[lvar->name] = right->type;
 
     /* Valid Code */
-    context.builder.CreateStore(lvar->codeGen(context), dst);
+    context.builder.CreateStore(right->codeGen(context), dst);
     return dst;
 }
 

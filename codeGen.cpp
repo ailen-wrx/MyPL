@@ -74,13 +74,13 @@ void CodeGenContext::generateCode(NBlock &root)
     // pushBlock(block);
 
     std::vector<Type *> mainArgs;
-    FunctionType *mainFuncType = FunctionType::get(Type::getFloatTy(llvmcontext), makeArrayRef(mainArgs), false);
+    FunctionType *mainFuncType = FunctionType::get(Type::getInt32Ty(llvmcontext), makeArrayRef(mainArgs), false);
     Function *mainFunc = Function::Create(mainFuncType, GlobalValue::ExternalLinkage, "main", module.get());
     BasicBlock *basicBlock = BasicBlock::Create(llvmcontext, "entry", mainFunc, nullptr);
     builder.SetInsertPoint(basicBlock);
     pushBlock(basicBlock);
     root.codeGen(*this);
-    builder.CreateRet(nullptr);
+    builder.CreateRet(ConstantInt::get(Type::getInt32Ty(llvmcontext), 0));
     popBlock();
 
     // popBlock();

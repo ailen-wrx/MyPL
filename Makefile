@@ -18,9 +18,7 @@ LIBS = `$(LLVMCONFIG) --libs`
 
 objGen.cpp: objGen.h
 
-codeGen.cpp: codeGen.h node.h
-
-parser.cpp: parser.y codeGen.h
+parser.cpp: parser.y codeGen.h node.h
 	bison -d -o $@ $<
 
 lexer.l: parser.cpp
@@ -28,7 +26,7 @@ lexer.l: parser.cpp
 lexer.cpp: lexer.l
 	flex -o $@ $<
 
-%.o: %.cpp codeGen.h
+%.o: %.cpp codeGen.h node.h
 	g++ -g -c $(CPPFLAGS) -o $@ $<
 
 compiler: $(OBJS)
