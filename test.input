@@ -1,5 +1,9 @@
-a=[5];
-i=1;
-a[1]=15;
-printf("%d",a[i]);
+n=3;
+i=0;
+while(i<n){
+    printf("%d",i);
+endline();
+    i=i+1;
+}
+printf("%d",i);
 endline();

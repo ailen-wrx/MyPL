@@ -9,10 +9,6 @@ Value *binaryAssign(CodeGenContext &context, NExp *left, NExp *right)
     {
     case TYPE_BINOP:
     case TYPE_CALL:
-    {
-        targetType = TYPE_INT;
-        break;
-    }
     case TYPE_ARRIDX:
     {
         targetType = TYPE_INT;
@@ -52,11 +48,11 @@ Value *binaryAssign(CodeGenContext &context, NExp *left, NExp *right)
         }
         else
         {
-            if (a != targetType)
-            {
-                cout << "Fail to match variables." << endl;
-                break;
-            }
+            // if (a != targetType)
+            // {
+            //     cout << "Fail to match variables." << endl;
+            //     break;
+            // }
             dst = context.getSymbolValue(lvar->name);
             context.builder.CreateStore(rval, dst);
         }
