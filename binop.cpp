@@ -185,6 +185,8 @@ void initializeBinaryOperation()
     BinaryOperation[BINOP_MINUS] = binaryMinus;
     BinaryOperation[BINOP_MUL] = binaryMul;
     BinaryOperation[BINOP_DIV] = binaryDiv;
+    BinaryOperation[BINOP_CEQ] = binaryCeq;
+    BinaryOperation[BINOP_CNE] = binaryCne;
     BinaryOperation[BINOP_CLT] = binaryClt;
     BinaryOperation[BINOP_CLE] = binaryCle;
     BinaryOperation[BINOP_CGE] = binaryCge;

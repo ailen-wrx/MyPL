@@ -35,7 +35,7 @@ compiler: $(OBJS)
 
 
 
-.PHONY: clean run output
+.PHONY: clean run test selftest qstest mmtest
 
 run: compiler
 	make run -C testcase
@@ -43,7 +43,15 @@ run: compiler
 test:
 	make test -C testcase
 
+selftest:
+	make selftest -C testcase
+
+qstest:
+	make qstest -C testcase
+
+mmtest:
+	make mmtest -C testcase
 
 clean:
 	rm -f parser.cpp parser.hpp lexer.cpp *.o compiler
-	
+

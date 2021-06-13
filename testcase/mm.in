@@ -1,0 +1,46 @@
+a=[400];
+b=[400];
+m=0;
+n=0;
+u=0;
+v=0;
+
+scanf("%d",m);
+scanf("%d",n);
+total=m*n;
+i=0;
+while(i<total){
+    scanf("%d",a[i]);
+    i=i+1;
+}
+
+scanf("%d",u);
+scanf("%d",v);
+total=u*v;
+i=0;
+while(i<total){
+    scanf("%d",b[i]);
+    i=i+1;
+}
+
+if(n==u){
+    i=0;
+    while(i<m){
+        j=0;
+        while(j<v){
+            val=0;
+            k=0;
+            while(k<n){
+                val=val+a[i*n+k]*b[k*v+j];
+                k=k+1;
+            }
+            printf("%10d", val);
+            j=j+1;
+        }
+        endline();
+        i=i+1;
+    }
+}else{
+    printf("Incompatible Dimensions");
+    endline();
+}
