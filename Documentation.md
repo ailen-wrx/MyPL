@@ -38,29 +38,21 @@ MyPL编程语言混合了python与标准C的部分特征。使用分号`;`作为
 
 ## 3	EBNF语法
 
-$$
-\begin{align*}
- & program\rightarrow stmts \\
- & stmts\rightarrow stmt\ |\ stmts\ stmt \\
- & stmt\rightarrow expr;\ |\ return\ expr\ ;|\ ifstmt\ |\ whilestmt\ |\ funcdef \\
- & blk\rightarrow\ \{\ stmts\ \}\ |\ \{\} \\
- & funcdef\rightarrow {\rm def}\  \bold {vairable}\ (\ funcargs\ )\ blk\ |\ {\rm extern}\ {\rm def}\  \bold {vairable}\ (\  funcargs\ )\ blk \\
- & funcargs\rightarrow |\ \bold {vairable}\ |\ funcargs\ ; \bold {vairable} \\
- & ifstmt\rightarrow {\rm if}\ (\ boolexpr\ )\ blk\ {\rm else}\ blk \\
- & whilestmt\rightarrow {\rm while}\ (\ boolexpr\ )\ blk \\
- & expr\rightarrow expr\ =\ expr\ |\ expr\ +\ expr\ |\ expr\ -\ expr\ |\ expr\ *\ expr\ |\ expr\ /\ expr\ \\
- &\ \ \ \ \ \ \ \ \ \ \ \ \ |\ \bold{double}\ |\ \bold{int}\ |\ -\bold{int}\ |\ \bold{string}\ |\ \bold{varaible}\ |\ arraydecl\ |\ arrayindex\ |\ callfunc \\
- & boolexpr\rightarrow expr\ \bold {comparison}\ expr\ |\ boolexpr\ {\rm and}\ boolexpr\ | \ boolexpr\ {\rm or}\ boolexpr\ \\
- & arraydecl\rightarrow {\rm global}\ [\ \bold{int}\ ]\ |\ [\ \bold{int}\ ] \\
- & arrayindex\rightarrow \bold{variable}\ [\ expr\ ]\  \\
- & callfunc\rightarrow \bold{variable}\ (\ funcvars\ ) \\
- & funcvars\rightarrow |\ expr\ |\ funcvars\ ,\ expr 
-\end{align*}
-$$
-
-
-
-
+ $ program\rightarrow stmts $
+ $ stmts\rightarrow stmt\ |\ stmts\ stmt $
+ $ stmt\rightarrow expr;\ |\ return\ expr\ ;|\ ifstmt\ |\ whilestmt\ |\ funcdef $
+ $ blk\rightarrow\ \{\ stmts\ \}\ |\ \{\} $
+ $ funcdef\rightarrow {\rm def}\  \bold {vairable}\ (\ funcargs\ )\ blk\ |\ {\rm extern}\ {\rm def}\  \bold {vairable}\ (\  funcargs\ )\ blk $
+ $ funcargs\rightarrow |\ \bold {vairable}\ |\ funcargs\ ; \bold {vairable} $
+ $ ifstmt\rightarrow {\rm if}\ (\ boolexpr\ )\ blk\ {\rm else}\ blk $
+ $ whilestmt\rightarrow {\rm while}\ (\ boolexpr\ )\ blk $
+ $ expr\rightarrow expr\ =\ expr\ |\ expr\ +\ expr\ |\ expr\ -\ expr\ |\ expr\ *\ expr\ |\ expr\ /\ expr\ $
+ $\ \ \ \ \ \ \ \ \ \ \ \ \ |\ \bold{double}\ |\ \bold{int}\ |\ -\bold{int}\ |\ \bold{string}\ |\ \bold{varaible}\ |\ arraydecl\ |\ arrayindex\ |\ callfunc $
+ $ boolexpr\rightarrow expr\ \bold {comparison}\ expr\ |\ boolexpr\ {\rm and}\ boolexpr\ | \ boolexpr\ {\rm or}\ boolexpr\ $
+ $ arraydecl\rightarrow {\rm global}\ [\ \bold{int}\ ]\ |\ [\ \bold{int}\ ] $
+ $ arrayindex\rightarrow \bold{variable}\ [\ expr\ ]\  $
+ $ callfunc\rightarrow \bold{variable}\ (\ funcvars\ ) $
+ $ funcvars\rightarrow |\ expr\ |\ funcvars\ ,\ expr $
 
 ## 4	抽象语法树UML类图
 
