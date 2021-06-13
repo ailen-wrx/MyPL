@@ -27,11 +27,11 @@ MyPL编程语言混合了python与标准C的部分特征。使用分号`;`作为
 
 *分支语句必须有完整的`if-else`结构。
 
-### 2.3	列表
+### 2.4	列表
 1. 作为全局变量的列表：`arr = global[(int)size]`，支持在函数中调用和赋值；
 2. 作为非全局变量的列表：`arr = [(int)size]`，不支持在函数中调用和赋值。
 
-### 2.4	函数
+### 2.5	函数
 函数声明：`def function_name(<list of arguments>) { function_body }`
 
 符合语法的函数均通过`return`返回一个值。
