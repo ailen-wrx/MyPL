@@ -11,11 +11,11 @@ selftest: $(TESTTARGET)
 test: $(TESTTARGET)
 	./$(TESTTARGET)test ./$(TESTTARGET)
 
-qstest: qs
-	./qstest ./qs
+qstest:
+	./qstest ./ourqs
 
-mmtest: mm
-	./mmtest ./mm
+mmtest:
+	./mmtest ./ourmm
 
 run:
 	../compiler <$(TESTTARGET).in

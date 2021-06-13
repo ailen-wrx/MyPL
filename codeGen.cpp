@@ -86,7 +86,7 @@ void CodeGenContext::generateCode(NBlock &root)
 
     std::vector<Type *> mainArgs;
     FunctionType *mainFuncType = FunctionType::get(Type::getInt32Ty(llvmcontext), makeArrayRef(mainArgs), false);
-    Function *mainFunc = Function::Create(mainFuncType, GlobalValue::ExternalLinkage, "main", module.get());
+    Function *mainFunc = Function::Create(mainFuncType, GlobalValue::ExternalLinkage, "main", module);
     BasicBlock *basicBlock = BasicBlock::Create(llvmcontext, "entry", mainFunc, nullptr);
     builder.SetInsertPoint(basicBlock);
 
@@ -101,7 +101,7 @@ void CodeGenContext::generateCode(NBlock &root)
     Log("Code Generation Success!");
     legacy::PassManager passManager;
     passManager.add(createPrintModulePass(outs()));
-    passManager.run(*(module.get()));
+    passManager.run(module);
 
     return;
 }

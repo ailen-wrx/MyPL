@@ -54,7 +54,7 @@ Value *NArray::codeGen(CodeGenContext &context)
     Value *dst;
     if (isGlobal)
     {
-        dst = new GlobalVariable(*context.module, arrayType, false, GlobalValue::ExternalLinkage,
+        dst = new GlobalVariable(context.module, arrayType, false, GlobalValue::ExternalLinkage,
                                  const_array, "globalArray");
     }
     else
@@ -141,7 +141,7 @@ Value *NCallFunc::codeGen(CodeGenContext &context)
     {
         return BuiltinFunction[funcName](context, args);
     }
-    Function *calleeFunc = context.module->getFunction(this->funcName);
+    Function *calleeFunc = context.module.getFunction(this->funcName);
     if (!calleeFunc)
     {
         // TODO: search for BuiltIn methods
@@ -238,7 +238,7 @@ Value *NFuncDef::codeGen(CodeGenContext &context)
             argTypes.push_back(context.typeToLLVMType(TYPE_INT));
     }
     FunctionType *funcType = FunctionType::get(context.typeToLLVMType(TYPE_INT), argTypes, false);
-    Function *f = Function::Create(funcType, GlobalValue::ExternalLinkage, name.c_str(), *context.module);
+    Function *f = Function::Create(funcType, GlobalValue::ExternalLinkage, name.c_str(), context.module);
 
     if (!isExternal)
     {

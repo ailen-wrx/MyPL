@@ -6,7 +6,7 @@ Value *endlineValue;
 
 Value *BuiltinPrintf(CodeGenContext &context, vector<NExp *> &args)
 {
-    Function *calleeFunc = context.module->getFunction("printf");
+    Function *calleeFunc = context.module.getFunction("printf");
     vector<Value *> argsVec;
     for (NExp *arg : args)
     {
@@ -19,7 +19,7 @@ Value *BuiltinPrintf(CodeGenContext &context, vector<NExp *> &args)
 
 Value *BuiltinScanf(CodeGenContext &context, vector<NExp *> &args)
 {
-    Function *calleeFunc = context.module->getFunction("scanf");
+    Function *calleeFunc = context.module.getFunction("scanf");
     AllocaInst *container =
         context.builder.CreateAlloca(Type::getInt32Ty(context.llvmcontext), nullptr, "temp");
     vector<Value *> argsVec;
@@ -90,7 +90,7 @@ Value *BuiltinScanf(CodeGenContext &context, vector<NExp *> &args)
 
 Value *BuiltinEndline(CodeGenContext &context, vector<NExp *> &args)
 {
-    Function *calleeFunc = context.module->getFunction("printf");
+    Function *calleeFunc = context.module.getFunction("printf");
     vector<Value *> argsVec{endlineValue};
     return context.builder.CreateCall(calleeFunc, argsVec);
 }
@@ -101,8 +101,8 @@ void initializeBuiltinFunction(CodeGenContext &context)
     //   /*true specifies the function as variadic*/
     FunctionType *inoutFuncType = FunctionType::get(context.builder.getInt32Ty(), inoutFuncArgs, true);
 
-    Function::Create(inoutFuncType, Function::ExternalLinkage, "printf", context.module.get());
-    Function::Create(inoutFuncType, Function::ExternalLinkage, "scanf", context.module.get());
+    Function::Create(inoutFuncType, Function::ExternalLinkage, "printf", context.module);
+    Function::Create(inoutFuncType, Function::ExternalLinkage, "scanf", context.module);
 
     endlineValue = context.builder.CreateGlobalString("\n", "endline");
 

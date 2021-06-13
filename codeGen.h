@@ -43,16 +43,13 @@ class CodeGenContext
 public:
 	LLVMContext llvmcontext;
 	IRBuilder<> builder;
-	unique_ptr<Module> module;
+	Module module;
 
 	vector<CodeGenBlock *> blockStack;
 	map<string, NFuncDef *> functions;
 	map<string, NArray *> arrays;
 
-	CodeGenContext() : llvmcontext(), builder(llvmcontext)
-	{
-		module = unique_ptr<Module>(new Module("main", this->llvmcontext));
-	}
+	CodeGenContext() : llvmcontext(), builder(llvmcontext), module("main", llvmcontext) {}
 
 	void pushBlock(BasicBlock *block);
 	void popBlock();
