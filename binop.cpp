@@ -82,8 +82,6 @@ Value *binaryAssign(CodeGenContext &context, NExp *left, NExp *right)
     default:
         break;
     }
-
-    //TODO: right->type bug(BinOp).
     return rval;
 }
 
