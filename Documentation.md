@@ -38,13 +38,25 @@ MyPL编程语言混合了python与标准C的部分特征。使用分号`;`作为
 
 ## 3	EBNF语法
 
-![](static/ebnf.jpg)
+$ program\rightarrow stmts $
+$ stmts\rightarrow stmt\ |\ stmts\ stmt $
+$ stmt\rightarrow expr;\ |\ return\ expr\ ;|\ ifstmt\ |\ whilestmt\ |\ funcdef $
+$ blk\rightarrow\ \{\ stmts\ \}\ |\ \{\} $
+$ funcdef\rightarrow {\rm def}\  \textbf {vairable}\ (\ funcargs\ )\ blk\ |\ {\rm extern}\ {\rm def}\  \textbf {vairable}\ (\ funcargs\ )\ blk $
+$ funcargs\rightarrow |\ \textbf {vairable}\ |\ funcargs\ ; \textbf {vairable} $
+$ ifstmt\rightarrow {\rm if}\ (\ boolexpr\ )\ blk\ {\rm else}\ blk $
+$ whilestmt\rightarrow {\rm while}\ (\ boolexpr\ )\ blk $
+$ expr\rightarrow expr\ =\ expr\ |\ expr\ +\ expr\ |\ expr\ -\ expr\ |\ expr\ *\ expr\ |\ expr\ /\ expr\ $
+$\ \ \ \ \ \ \ \ \ \ \ \ \ |\ \textbf{double}\ |\ \textbf{int}\ |\ -\textbf{int}\ |\ \textbf{string}\ |\ \textbf{varaible}\ |\ arraydecl\ |\ arrayindex\ |\ callfunc $
+$ boolexpr\rightarrow expr\ \textbf {comparison}\ expr\ |\ boolexpr\ {\rm and}\ boolexpr\ | \ boolexpr\ {\rm or}\ boolexpr\ $
+$ arraydecl\rightarrow {\rm global}\ [\ \textbf{int}\ ]\ |\ [\ \textbf{int}\ ] $
+$ arrayindex\rightarrow \textbf{variable}\ [\ expr\ ]\  $
+$ callfunc\rightarrow \textbf{variable}\ (\ funcvars\ ) $
+$ funcvars\rightarrow |\ expr\ |\ funcvars\ ,\ expr $
 
 ## 4	抽象语法树UML类图
 
 ![UML类图](static/UML.svg)
-
-
 
 
 
