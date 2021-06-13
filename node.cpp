@@ -53,14 +53,14 @@ Value *NArray::codeGen(CodeGenContext &context)
     Value *arraySizeValue = ConstantInt::get(Type::getInt32Ty(context.llvmcontext), size);
     ArrayType *arrayType = ArrayType::get(context.typeToLLVMType(TYPE_INT), size);
 
-    ConstantAggregateZero *const_array = ConstantAggregateZero::get(arrayType);
+    ConstantAggregateZero *constArray = ConstantAggregateZero::get(arrayType);
 
     Value *dst;
     if (isGlobal)
     {
         // Create global array.
         dst = new GlobalVariable(context.module, arrayType, false, GlobalValue::ExternalLinkage,
-                                 const_array, "globalArray");
+                                 constArray, "globalArray");
     }
     else
     {
