@@ -1,3 +1,5 @@
+// codeGen.h and codeGen.cpp are for intermediate code generation implementation.
+
 #ifndef _CODEGEN_H
 #define _CODEGEN_H
 
@@ -63,6 +65,7 @@ public:
 	void generateCode(NBlock &root);
 
 private:
+	// Forbid copy construction
 	CodeGenContext(const CodeGenContext &c);
 };
 

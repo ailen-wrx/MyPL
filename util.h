@@ -1,3 +1,5 @@
+// util.h and util.cpp are to put some useful functions.
+
 #ifndef _UTIL_H
 #define _UTIL_H
 

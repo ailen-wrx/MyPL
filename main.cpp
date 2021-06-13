@@ -13,7 +13,11 @@ int main()
 
     CodeGenContext context;
     initializeBinaryOperation();
+
+    // Intermediate code generation.
     context.generateCode(*programBlock);
+
+    // Object code generation.
     objGen(context);
     return 0;
 }

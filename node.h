@@ -1,3 +1,5 @@
+// node.h and node.cpp are for abstract syntax tree node implementation.
+
 #ifndef _NODE_H
 #define _NODE_H
 
@@ -45,29 +47,29 @@ using namespace std;
 
 class CodeGenContext;
 
-class Node
+class Node // general node
 {
 public:
     virtual Value *codeGen(CodeGenContext &context) = 0;
     virtual string toString() = 0;
 };
 
-class NStmt : public Node
+class NStmt : public Node // statement node
 {
 public:
-    int stmt_type;
+    int stmt_type; // statement type (in #define STMT_TYPE_XXX)
     NStmt(int t) : stmt_type(t) {}
 };
 
-class NExp : public NStmt
+class NExp : public NStmt // expression node
 {
 public:
-    int type;
+    int type; // expression type (in #define TYPE_XXX)
     NExp(int t) : NStmt(STMT_TYPE_EXP), type(t) {}
     virtual bool isDouble(CodeGenContext &context) { return false; }
 };
 
-class NVariable : public NExp
+class NVariable : public NExp // varaible node
 {
 public:
     string name;
@@ -78,7 +80,7 @@ public:
     bool isDouble(CodeGenContext &context) override;
 };
 
-class NDouble : public NExp
+class NDouble : public NExp // double node
 {
 public:
     double value;
@@ -92,7 +94,7 @@ public:
     }
 };
 
-class NInt : public NExp
+class NInt : public NExp // integer node
 {
 public:
     int value;
@@ -106,7 +108,7 @@ public:
     }
 };
 
-class NStr : public NExp
+class NStr : public NExp // string node
 {
 public:
     string value;
@@ -119,7 +121,7 @@ public:
     }
 };
 
-class NArray : public NExp
+class NArray : public NExp // array node
 {
 public:
     vector<Value *> elements;
@@ -136,7 +138,7 @@ public:
     }
 };
 
-class NArrayIndex : public NExp
+class NArrayIndex : public NExp // array index node (e.g. a[3])
 {
 public:
     string arrName;
@@ -157,7 +159,7 @@ public:
     }
 };
 
-class NBinOp : public NExp
+class NBinOp : public NExp // binary operation node
 {
 public:
     int op;
@@ -175,7 +177,7 @@ public:
     }
 };
 
-class NCallFunc : public NExp
+class NCallFunc : public NExp // calling function node
 {
 public:
     string funcName;
@@ -196,7 +198,7 @@ public:
     };
 };
 
-class NBlock : public Node
+class NBlock : public Node // block node, includes a series of statements covered by braces
 {
 public:
     vector<NStmt *> statements;
@@ -212,7 +214,7 @@ public:
     };
 };
 
-class NIfStmt : public NStmt
+class NIfStmt : public NStmt // if statement node
 {
 public:
     NExp *cond;
@@ -228,7 +230,7 @@ public:
     };
 };
 
-class NWhileStmt : public NStmt
+class NWhileStmt : public NStmt // while statement node
 {
 public:
     NExp *cond;
@@ -244,7 +246,7 @@ public:
     };
 };
 
-class NFuncDef : public NStmt
+class NFuncDef : public NStmt // function definition node
 {
 public:
     string name;
@@ -267,7 +269,7 @@ public:
     };
 };
 
-class NRetStmt : public NStmt
+class NRetStmt : public NStmt // return statement node
 {
 public:
     NExp *retVal;

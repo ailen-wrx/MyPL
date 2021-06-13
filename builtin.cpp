@@ -20,6 +20,8 @@ Value *BuiltinPrintf(CodeGenContext &context, vector<NExp *> &args)
 Value *BuiltinScanf(CodeGenContext &context, vector<NExp *> &args)
 {
     Function *calleeFunc = context.module.getFunction("scanf");
+
+    // Create space for the incoming value.
     AllocaInst *container =
         context.builder.CreateAlloca(Type::getInt32Ty(context.llvmcontext), nullptr, "temp");
     vector<Value *> argsVec;
@@ -31,15 +33,17 @@ Value *BuiltinScanf(CodeGenContext &context, vector<NExp *> &args)
     Value *val = context.builder.CreateLoad(container);
     Value *dst;
 
+    // Implement assignment to the value in the function arguments.
     switch (args[1]->type)
     {
 
     case TYPE_VAR:
     {
         NVariable *targetVar = static_cast<NVariable *>(args[1]);
-        int a = context.getType(targetVar->name);
-        if (a == -1)
+        int targetVarType = context.getType(targetVar->name);
+        if (targetVarType == -1)
         {
+            // Not found. `targetVar` undefined.
             context.getCurrentBlock()->localVarTypes[targetVar->name] = TYPE_INT;
 
             Type *type = context.typeToLLVMType(TYPE_INT);
@@ -49,11 +53,6 @@ Value *BuiltinScanf(CodeGenContext &context, vector<NExp *> &args)
         }
         else
         {
-            // if (a != TYPE_INT)
-            // {
-            //     cout << "Fail to match variables." << endl;
-            //     break;
-            // }
             dst = context.getSymbolValue(targetVar->name);
             context.builder.CreateStore(val, dst);
         }
@@ -68,6 +67,7 @@ Value *BuiltinScanf(CodeGenContext &context, vector<NExp *> &args)
         {
             if (targetArray->elementType == -1)
             {
+                // First assignment. Type binding.
                 targetArray->type = TYPE_INT;
             }
             else if (targetArray->elementType != TYPE_INT)
@@ -90,6 +90,7 @@ Value *BuiltinScanf(CodeGenContext &context, vector<NExp *> &args)
 
 Value *BuiltinEndline(CodeGenContext &context, vector<NExp *> &args)
 {
+    // thie function works the same way as `printf("\n")` .
     Function *calleeFunc = context.module.getFunction("printf");
     vector<Value *> argsVec{endlineValue};
     return context.builder.CreateCall(calleeFunc, argsVec);
@@ -97,8 +98,8 @@ Value *BuiltinEndline(CodeGenContext &context, vector<NExp *> &args)
 
 void initializeBuiltinFunction(CodeGenContext &context)
 {
+    // Function declaration for printf and scanf.
     std::vector<Type *> inoutFuncArgs = {Type::getInt8PtrTy(context.llvmcontext)};
-    //   /*true specifies the function as variadic*/
     FunctionType *inoutFuncType = FunctionType::get(context.builder.getInt32Ty(), inoutFuncArgs, true);
 
     Function::Create(inoutFuncType, Function::ExternalLinkage, "printf", context.module);
@@ -106,6 +107,7 @@ void initializeBuiltinFunction(CodeGenContext &context)
 
     endlineValue = context.builder.CreateGlobalString("\n", "endline");
 
+    // Add function pointer to the `map`.
     BuiltinFunction["printf"] = BuiltinPrintf;
     BuiltinFunction["scanf"] = BuiltinScanf;
     BuiltinFunction["endline"] = BuiltinEndline;

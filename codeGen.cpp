@@ -21,6 +21,7 @@ CodeGenBlock *CodeGenContext::getCurrentBlock()
 
 Value *CodeGenContext::getSymbolValue(string name) const
 {
+    // Check all blocks in the stack to find the value.
     for (auto it = blockStack.rbegin(); it != blockStack.rend(); it++)
         if ((*it)->localVars.find(name) != (*it)->localVars.end())
             return (*it)->localVars[name];
@@ -79,11 +80,7 @@ void CodeGenContext::generateCode(NBlock &root)
 {
     Log("Generating IR Code...");
 
-    // std::vector<Type *> sysArgs;
-    // FunctionType *FuncType = FunctionType::get(Type::getVoidTy(this->llvmcontext), makeArrayRef(sysArgs), false);
-    // BasicBlock *block = BasicBlock::Create(this->llvmcontext, "entry");
-    // pushBlock(block);
-
+    // Create main function wrapper.
     std::vector<Type *> mainArgs;
     FunctionType *mainFuncType = FunctionType::get(Type::getInt32Ty(llvmcontext), makeArrayRef(mainArgs), false);
     Function *mainFunc = Function::Create(mainFuncType, GlobalValue::ExternalLinkage, "main", module);
@@ -92,12 +89,12 @@ void CodeGenContext::generateCode(NBlock &root)
 
     initializeBuiltinFunction(*this);
 
+    // Code generation.
     pushBlock(basicBlock);
     root.codeGen(*this);
     builder.CreateRet(ConstantInt::get(Type::getInt32Ty(llvmcontext), 0));
     popBlock();
 
-    // popBlock();
     Log("Code Generation Success!");
     legacy::PassManager passManager;
     passManager.add(createPrintModulePass(outs()));

@@ -1,3 +1,5 @@
+// binop.h and binop.cpp are for binary operation implementations.
+
 #ifndef _BINOP_H
 #define _BINOP_H
 

@@ -1,3 +1,5 @@
+// objGen.h and objGen.cpp are for object code generation.
+
 #ifndef TINYCOMPILER_OBJGEN_H
 #define TINYCOMPILER_OBJGEN_H
 

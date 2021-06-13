@@ -28,19 +28,23 @@ Value *binaryAssign(CodeGenContext &context, NExp *left, NExp *right)
     case TYPE_VAR:
     {
         NVariable *lvar = static_cast<NVariable *>(left);
-        int a = context.getType(lvar->name);
-        if (a == -1)
+        int lvarName = context.getType(lvar->name);
+        if (lvarName == -1)
         {
+            // Not found. `lvar` undefined.
             context.getCurrentBlock()->localVarTypes[lvar->name] = targetType;
 
             if (targetType == TYPE_ARR)
             {
+                // Array declaration.
                 context.getCurrentBlock()->localVars[lvar->name] = rval;
                 context.arrays[lvar->name] = (NArray *)right;
             }
             else
             {
                 Type *type = context.typeToLLVMType(targetType);
+
+                // Create space for the new variable.
                 dst = context.builder.CreateAlloca(type);
                 context.getCurrentBlock()->localVars[lvar->name] = dst;
                 context.builder.CreateStore(rval, dst);
@@ -48,11 +52,7 @@ Value *binaryAssign(CodeGenContext &context, NExp *left, NExp *right)
         }
         else
         {
-            // if (a != targetType)
-            // {
-            //     cout << "Fail to match variables." << endl;
-            //     break;
-            // }
+            // Variable already exists. Cover it.
             dst = context.getSymbolValue(lvar->name);
             context.builder.CreateStore(rval, dst);
         }
@@ -67,6 +67,7 @@ Value *binaryAssign(CodeGenContext &context, NExp *left, NExp *right)
         {
             if (targetArray->elementType == -1)
             {
+                // First assignment. Type binding.
                 targetArray->type = targetType;
             }
             else if (targetArray->elementType != targetType)
@@ -88,6 +89,7 @@ Value *binaryAssign(CodeGenContext &context, NExp *left, NExp *right)
 
 Value *binaryPlus(CodeGenContext &context, NExp *left, NExp *right)
 {
+    // Floating point operation for double and integer operation for integer.
     if (left->isDouble(context) || right->isDouble(context))
         return context.builder.CreateFAdd(left->codeGen(context), right->codeGen(context), "addftmp");
     else
@@ -180,6 +182,7 @@ Value *binaryOr(CodeGenContext &context, NExp *left, NExp *right)
 
 void initializeBinaryOperation()
 {
+    // Add function pointer to the `map`.
     BinaryOperation[BINOP_ASSIGN] = binaryAssign;
     BinaryOperation[BINOP_PLUS] = binaryPlus;
     BinaryOperation[BINOP_MINUS] = binaryMinus;
