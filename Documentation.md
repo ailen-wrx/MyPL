@@ -42,19 +42,17 @@ $ program\rightarrow stmts $
 $ stmts\rightarrow stmt\ |\ stmts\ stmt $
 $ stmt\rightarrow expr;\ |\ return\ expr\ ;|\ ifstmt\ |\ whilestmt\ |\ funcdef $
 $ blk\rightarrow\ \{\ stmts\ \}\ |\ \{\} $
-$ funcdef\rightarrow \textbf{def}\  {\rm vairable}\ (\ funcargs\ )\ blk\ |\ {\rm extern}\ {\rm def}\   {\rm vairable}\ (\ funcargs\ )\ blk $
-$ funcargs\rightarrow |\ {\rm vairable}\ |\ funcargs\ ; {\rm vairable} $
+$ funcdef\rightarrow {\rm def}\  \textbf {vairable}\ (\ funcargs\ )\ blk\ |\ {\rm extern}\ {\rm def}\  \textbf {vairable}\ (\ funcargs\ )\ blk $
+$ funcargs\rightarrow |\ \textbf {vairable}\ |\ funcargs\ ; \textbf {vairable} $
 $ ifstmt\rightarrow {\rm if}\ (\ boolexpr\ )\ blk\ {\rm else}\ blk $
 $ whilestmt\rightarrow {\rm while}\ (\ boolexpr\ )\ blk $
 $ expr\rightarrow expr\ =\ expr\ |\ expr\ +\ expr\ |\ expr\ -\ expr\ |\ expr\ *\ expr\ |\ expr\ /\ expr\ $
-$\ \ \ \ \ \ \ \ \ \ \ \ \ |\ \bold{double}\ |\ \bold{int}\ |\ -\bold{int}\ |\ \bold{string}\ |\ \bold{varaible}\ |\ arraydecl\ |\ arrayindex\ |\ callfunc $
-$ boolexpr\rightarrow expr\ \bold {comparison}\ expr\ |\ boolexpr\ {\rm and}\ boolexpr\ | \ boolexpr\ {\rm or}\ boolexpr\ $
-$ arraydecl\rightarrow {\rm global}\ [\ \bold{int}\ ]\ |\ [\ \bold{int}\ ] $
-$ arrayindex\rightarrow \bold{variable}\ [\ expr\ ]\  $
-$ callfunc\rightarrow \bold{variable}\ (\ funcvars\ ) $
+$\ \ \ \ \ \ \ \ \ \ \ \ \ |\ \textbf{double}\ |\ \textbf{int}\ |\ -\textbf{int}\ |\ \textbf{string}\ |\ \textbf{varaible}\ |\ arraydecl\ |\ arrayindex\ |\ callfunc $
+$ boolexpr\rightarrow expr\ \textbf {comparison}\ expr\ |\ boolexpr\ {\rm and}\ boolexpr\ | \ boolexpr\ {\rm or}\ boolexpr\ $
+$ arraydecl\rightarrow {\rm global}\ [\ \textbf{int}\ ]\ |\ [\ \textbf{int}\ ] $
+$ arrayindex\rightarrow \textbf{variable}\ [\ expr\ ]\  $
+$ callfunc\rightarrow \textbf{variable}\ (\ funcvars\ ) $
 $ funcvars\rightarrow |\ expr\ |\ funcvars\ ,\ expr $
-
-
 
 ## 4	抽象语法树UML类图
 
