@@ -10,7 +10,7 @@ MyPL编程语言混合了python与标准C的部分特征。使用分号`;`作为
 
 数据类型均使用隐式声明。
 
-1. Number: 包含int, float, bool三种数字类型
+1. Number: 包含int, float, bool三种数字类型，bool类型仅在bool表达式中用到
 2. String: 用单引号`'`或双引号`"`标注
 3. List: 仅声明空间：`arr=(global)[(int)size]`。列表元素仅支持Number。
 
