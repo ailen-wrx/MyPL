@@ -47,10 +47,10 @@ NArray *CodeGenContext::getArrayNode(string name) const
     return nullptr;
 }
 
-Type *CodeGenContext::typeToLLVMType(int T)
+Type *CodeGenContext::typeToLLVMType(int type)
 {
     Type *ret = nullptr;
-    switch (T)
+    switch (type)
     {
     case (TYPE_INT):
     {

@@ -59,7 +59,7 @@ public:
 
 	Value *getSymbolValue(string name) const;
 	int getType(string name) const;
-	Type *typeToLLVMType(int T);
+	Type *typeToLLVMType(int type);
 	NArray *getArrayNode(string name) const;
 
 	void generateCode(NBlock &root);

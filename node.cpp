@@ -12,8 +12,8 @@ Value *NVariable::codeGen(CodeGenContext &context)
     Log("Var", name);
 
     // Get pointer to the value.
-    Value *V = context.getSymbolValue(name);
-    if (!V)
+    Value *val = context.getSymbolValue(name);
+    if (!val)
     {
         cout << "Unknown variable name" << endl;
         return nullptr;
@@ -22,12 +22,12 @@ Value *NVariable::codeGen(CodeGenContext &context)
     {
         // Return pointer to the array.
         ArrayRef<Value *> indices{ConstantInt::get(Type::getInt32Ty(context.llvmcontext), 0, false)};
-        auto ptr = context.builder.CreateInBoundsGEP(V, indices, "arrayPtr");
+        auto ptr = context.builder.CreateInBoundsGEP(val, indices, "arrayPtr");
         return ptr;
     }
 
     // Load value and return.
-    return context.builder.CreateLoad(V, false, "");
+    return context.builder.CreateLoad(val, false, "");
 }
 
 Value *NDouble::codeGen(CodeGenContext &context)
