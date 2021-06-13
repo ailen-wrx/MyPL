@@ -9,7 +9,7 @@ OBJS = parser.o \
 	   binop.o \
 	   builtin.o \
        main.o 
-TEST = qs.in
+
 
 LLVMCONFIG = /opt/llvm/bin/llvm-config
 # LLVMCONFIG = llvm-config
@@ -34,13 +34,15 @@ compiler: $(OBJS)
 	g++ -g $(CPPFLAGS) $(OBJS) $(LIBS) $(LDFLAGS) -o $@
 
 
+
 .PHONY: clean run output
 
-output: output.o
-	g++ output.o -o output -no-pie && ./output
-
 run: compiler
-	./compiler <testcase/$(TEST)
+	make run -C testcase
+
+test:
+	make test -C testcase
+
 
 clean:
 	rm -f parser.cpp parser.hpp lexer.cpp *.o compiler
