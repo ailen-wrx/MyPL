@@ -34,7 +34,7 @@ extern int yylex();
 %token <str> TVAR TSTRING
 %token <token> TEQUAL TPLUS TMINUS TMUL TDIV TMOD
 %token <token> TCEQ TCNE TCLT TCLE TCGT TCGE TAND TOR
-%token <token> TIF TELSE TFOR TRETURN TDEF TWHILE TEXTERN
+%token <token> TIF TELSE TFOR TRETURN TDEF TWHILE TEXTERN TGLOBAL
 %token <token> TLPAREN TRPAREN TLBRACE TRBRACE TLBRACKET TRBRACKET TCOMMA TCOLON TSEMICOLON
 %token <number> TDOUBLE
 %token <intval> TINT
@@ -45,7 +45,7 @@ extern int yylex();
 %type <stmt> stmt ifstmt whilestmt funcdef
 %type <stringVec> funcargs
 %type <NExpVec> funcvars
-%type <array> arrayelements arraydecl
+%type <array> arraydecl
 %type <index> arrayindex
 %type <call> callfunc
 %type <token> comparison
@@ -108,10 +108,10 @@ expr:
 	| expr TDIV expr { $$ = new NBinOp($2, $1, $3); }
 	| TDOUBLE { $$ = new NDouble($1); }
 	| TINT { $$ = new NInt($1); }
+	| TMINUS TINT { $$ = new NInt(-$1); }
 	| TSTRING { $$ = new NStr(*$1); }
 	| TVAR   { $$ = new NVariable(*$1);}
-	| TLBRACE arrayelements TRBRACE { $$ = $2; }
-	| TLBRACKET arraydecl TRBRACKET { $$ = $2; }
+	| arraydecl { $$ = $1; }
 	| arrayindex { $$ = $1; }
 	| callfunc { $$ = $1; }
 	;
@@ -126,20 +126,9 @@ comparison:
 	TCEQ | TCNE | TCLT | TCLE | TCGT | TCGE | TAND | TOR
 	;
 
-arrayelements: 
-	%empty { }
-	| TDOUBLE { }
-	| TSTRING {  }
-	| TINT { }
-	| TLBRACKET arrayelements TRBRACKET {  }
-	| arrayelements TCOMMA TDOUBLE {  }
-	| arrayelements TCOMMA TSTRING {  }
-	| arrayelements TCOMMA TLBRACKET arrayelements TRBRACKET {  }
-	;
-
 arraydecl: 
-	%empty { }
-	| TINT { $$ = new NArray($1); }
+	TGLOBAL TLBRACKET TINT TRBRACKET { $$ = new NArray($3, true); }
+	| TLBRACKET TINT TRBRACKET { $$ = new NArray($3, false); }
 	;
 
 arrayindex:

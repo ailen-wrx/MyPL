@@ -125,7 +125,8 @@ public:
     vector<Value *> elements;
     int size;
     int elementType;
-    NArray(int s) : NExp(TYPE_ARR), size(s), elementType(-1) {}
+    bool isGlobal;
+    NArray(int s, bool b) : NExp(TYPE_ARR), size(s), isGlobal(b), elementType(-1) {}
 
     Value *codeGen(CodeGenContext &context) override;
     string toString() override { return ""; }
