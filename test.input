@@ -1,11 +1,3 @@
-extern printf();
-a=[5];
-def foo(){
-    printf("%d  ",a[1]);
-    a[1]=2;
-    printf("%d  ",a[1]);
-}
-a[1]=1;
-printf("%d  ",a[1]);
-foo();
-printf("%d  ",a[1]);
+b=3;
+c=b;
+a=[10000];

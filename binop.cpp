@@ -10,12 +10,17 @@ Value *binaryAssign(CodeGenContext &context, NExp *left, NExp *right)
     case TYPE_BINOP:
     case TYPE_CALL:
     {
-        targetType = TYPE_DOUBLE;
+        targetType = TYPE_INT;
         break;
     }
     case TYPE_ARRIDX:
     {
         targetType = TYPE_INT;
+        break;
+    }
+    case TYPE_VAR:
+    {
+        targetType = context.getType(((NVariable *)right)->name);
         break;
     }
     }
