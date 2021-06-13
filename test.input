@@ -1,4 +1,4 @@
-a=[5];
-scanf("%d",a[1]);
-printf("%d",a[1]);
+a=5;
+a=a+1;
+printf("%d",a);
 endline();
