@@ -3,6 +3,6 @@
 
 #include "codeGen.h"
 
-void initializeBuiltinFunction();
+void initializeBuiltinFunction(CodeGenContext &context);
 
 #endif
