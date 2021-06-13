@@ -12,26 +12,59 @@ MyPL编程语言混合了python与标准C的部分特征。使用分号`;`作为
 
 1. Number: 包含int, float, bool三种数字类型
 2. String: 用单引号`'`或双引号`"`标注，支持反斜杠`\`转义字符
-3. List: 仅声明空间：`arr[(int)size]`；初始化成员：`arr{element1, element2, ...}`。列表元素可以是Number，String或者List。
+3. List: 仅声明空间：`arr=(global)[(int)size]`。列表元素仅支持Number。
 
 ### 2.2	基本操作
 
 1. 变量赋值：变量赋值不需要类型声明；每个变量在使用前都必须赋值。
    `a = 100`
    `s = "string"`
-
+   `arr = [10]`
 2. 表达式运算：能实现正常的表达式运算
 
 ### 2.3	分支和循环结构
-支持`if-else`分支语句和`while`循环语句。分支结构的语句块和循环结构的结构体均使用囊括在花括号`{}`中
+支持`if-else`分支语句和`while`循环语句。分支结构的语句块和循环结构的结构体均使用囊括在花括号`{}`中。
 
-### 2.3	表
-表变量的赋值以两边花括号`{}`为标志，且支持以表内嵌套的方式实现高维表结构。
+*分支语句必须有完整的`if-else`结构。
+
+### 2.3	列表
+1. 作为全局变量的列表：`arr = global[(int)size]`，支持在函数中调用和赋值；
+2. 作为非全局变量的列表：`arr = [(int)size]`，不支持在函数中调用和赋值。
 
 ### 2.4	函数
-不支持void返回类型，合法函数均通过`return`返回值。
+函数声明：`def function_name(<list of arguments>) { function_body }`
+
+符合语法的函数均通过`return`返回一个值。
+
+## 3	EBNF语法
+
+$$
+\begin{align*}
+ & program\rightarrow stmts \\
+ & stmts\rightarrow stmt\ |\ stmts\ stmt \\
+ & stmt\rightarrow expr;\ |\ return\ expr\ ;|\ ifstmt\ |\ whilestmt\ |\ funcdef \\
+ & blk\rightarrow\ \{\ stmts\ \}\ |\ \{\} \\
+ & funcdef\rightarrow {\rm def}\  \bold {vairable}\ (\ funcargs\ )\ blk\ |\ {\rm extern}\ {\rm def}\  \bold {vairable}\ (\  funcargs\ )\ blk \\
+ & funcargs\rightarrow |\ \bold {vairable}\ |\ funcargs\ ; \bold {vairable} \\
+ & ifstmt\rightarrow {\rm if}\ (\ boolexpr\ )\ blk\ {\rm else}\ blk \\
+ & whilestmt\rightarrow {\rm while}\ (\ boolexpr\ )\ blk \\
+ & expr\rightarrow expr\ =\ expr\ |\ expr\ +\ expr\ |\ expr\ -\ expr\ |\ expr\ *\ expr\ |\ expr\ /\ expr\ \\
+ &\ \ \ \ \ \ \ \ \ \ \ \ \ |\ \bold{double}\ |\ \bold{int}\ |\ -\bold{int}\ |\ \bold{string}\ |\ \bold{varaible}\ |\ arraydecl\ |\ arrayindex\ |\ callfunc \\
+ & boolexpr\rightarrow expr\ \bold {comparison}\ expr\ |\ boolexpr\ {\rm and}\ boolexpr\ | \ boolexpr\ {\rm or}\ boolexpr\ \\
+ & arraydecl\rightarrow {\rm global}\ [\ \bold{int}\ ]\ |\ [\ \bold{int}\ ] \\
+ & arrayindex\rightarrow \bold{variable}\ [\ expr\ ]\  \\
+ & callfunc\rightarrow \bold{variable}\ (\ funcvars\ ) \\
+ & funcvars\rightarrow |\ expr\ |\ funcvars\ ,\ expr 
+\end{align*}
+$$
 
 
+
+
+
+## 4	抽象语法树UML类图
+
+![UML类图](static/UML.svg)
 
 
 
