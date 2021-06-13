@@ -128,6 +128,10 @@ Value *NBinOp::codeGen(CodeGenContext &context)
 Value *NCallFunc::codeGen(CodeGenContext &context)
 {
     Log("Function Call: ", this->funcName);
+    if (BuiltinFunction.find(funcName) != BuiltinFunction.end())
+    {
+        return BuiltinFunction[funcName](context, args);
+    }
     Function *calleeFunc = context.module->getFunction(this->funcName);
     if (!calleeFunc)
     {

@@ -1,4 +1,5 @@
 #include "codeGen.h"
+#include "builtin.h"
 
 void CodeGenContext::pushBlock(BasicBlock *block)
 {
@@ -88,6 +89,9 @@ void CodeGenContext::generateCode(NBlock &root)
     Function *mainFunc = Function::Create(mainFuncType, GlobalValue::ExternalLinkage, "main", module.get());
     BasicBlock *basicBlock = BasicBlock::Create(llvmcontext, "entry", mainFunc, nullptr);
     builder.SetInsertPoint(basicBlock);
+
+    initializeBuiltinFunction(*this);
+
     pushBlock(basicBlock);
     root.codeGen(*this);
     builder.CreateRet(ConstantInt::get(Type::getInt32Ty(llvmcontext), 0));
