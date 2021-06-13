@@ -8,7 +8,8 @@ OBJS = parser.o \
        objGen.o \
 	   binop.o \
 	   builtin.o \
-       main.o \
+       main.o 
+TEST = qs.in
 
 LLVMCONFIG = /opt/llvm/bin/llvm-config
 # LLVMCONFIG = llvm-config
@@ -39,7 +40,7 @@ output: output.o
 	g++ output.o -o output -no-pie && ./output
 
 run: compiler
-	./compiler <test.input
+	./compiler <testcase/$(TEST)
 
 clean:
 	rm -f parser.cpp parser.hpp lexer.cpp *.o compiler
