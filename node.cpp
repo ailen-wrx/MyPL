@@ -48,12 +48,19 @@ Value *NArray::codeGen(CodeGenContext &context)
 {
     Value *arraySizeValue = ConstantInt::get(Type::getInt32Ty(context.llvmcontext), size);
     ArrayType *arrayType = ArrayType::get(context.typeToLLVMType(TYPE_INT), size);
-    // Value *dst = context.builder.CreateAlloca(arrayType, arraySizeValue, "arraytmp");
 
     ConstantAggregateZero *const_array = ConstantAggregateZero::get(arrayType);
 
-    Value *dst = new GlobalVariable(*context.module, arrayType, false, GlobalValue::ExternalLinkage,
-                                    const_array, "globalArray");
+    Value *dst;
+    if (isGlobal)
+    {
+        dst = new GlobalVariable(*context.module, arrayType, false, GlobalValue::ExternalLinkage,
+                                 const_array, "globalArray");
+    }
+    else
+    {
+        dst = context.builder.CreateAlloca(arrayType, arraySizeValue, "arraytmp");
+    }
     return dst;
 }
 

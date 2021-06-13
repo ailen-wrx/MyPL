@@ -1,9 +1,52 @@
-arr=[400];
+a=global[20];
+n=0;
 i=0;
-n=3;
-
-arr[3] = 0;
-scanf("%d",arr[3]);
-printf("%d",arr[3]);
-
-endline();
+def qs(l,r)
+{
+    if (l<r)
+    {
+        i=l;
+        j=r;
+        tmp=0;
+        while(i<j)
+        {
+            while(i<j and a[i]<a[j])
+            {
+                j=j-1;
+            }
+            if (i<j)
+            {
+                tmp=a[i];
+                a[i]=a[j];
+                a[j]=tmp;
+                i=i+1;
+            } else {}
+            while(i<j and a[i]<a[j])
+            {
+                i=i+1;
+            }
+            if (i<j)
+            {
+                tmp=a[i];
+                a[i]=a[j];
+                a[j]=tmp;
+                j=j-1;
+            } else {}
+        }
+        qs(l, i-1);
+        qs(i+1, r);
+    } else {}
+}
+scanf("%d", n);
+while(i<n)
+{
+    scanf("%d", a[i]);
+    i=i+1;
+}
+qs(0,n-1);
+while(i<n)
+{
+    printf("%d", a[i]);
+    endline();
+    i=i+1;
+}

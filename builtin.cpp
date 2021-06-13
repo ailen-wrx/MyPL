@@ -49,11 +49,11 @@ Value *BuiltinScanf(CodeGenContext &context, vector<NExp *> &args)
         }
         else
         {
-            if (a != TYPE_INT)
-            {
-                cout << "Fail to match variables." << endl;
-                break;
-            }
+            // if (a != TYPE_INT)
+            // {
+            //     cout << "Fail to match variables." << endl;
+            //     break;
+            // }
             dst = context.getSymbolValue(targetVar->name);
             context.builder.CreateStore(val, dst);
         }
