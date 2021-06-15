@@ -86,7 +86,8 @@ Value *NArrayIndex::codeGen(CodeGenContext &context)
 
     Value *indexValue = index->codeGen(context);
 
-    ArrayRef<Value *> normalIndices{ConstantInt::get(Type::getInt32Ty(context.llvmcontext), 0), indexValue};
+    vector<Value *> normalIndicesVec{ConstantInt::get(Type::getInt32Ty(context.llvmcontext), 0), indexValue};
+    ArrayRef<Value *> normalIndices(normalIndicesVec);
     ArrayRef<Value *> argIndices{indexValue};
     Value *ptr;
 
@@ -114,7 +115,8 @@ Value *NArrayIndex::modify(CodeGenContext &context, Value *newVal)
     }
 
     Value *indexValue = index->codeGen(context);
-    ArrayRef<Value *> normalIndices{ConstantInt::get(Type::getInt32Ty(context.llvmcontext), 0), indexValue};
+    vector<Value *> normalIndicesVec{ConstantInt::get(Type::getInt32Ty(context.llvmcontext), 0), indexValue};
+    ArrayRef<Value *> normalIndices(normalIndicesVec);
     ArrayRef<Value *> argIndices{indexValue};
     Value *ptr;
 

@@ -1,4 +1,4 @@
-a=global[20];
+a=global[10000];
 n=0;
 cnt=0;
 def qs(l,r)
