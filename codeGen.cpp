@@ -62,6 +62,11 @@ Type *CodeGenContext::typeToLLVMType(int type)
         ret = Type::getDoubleTy(llvmcontext);
         break;
     }
+    case (TYPE_CHAR):
+    {
+        ret = Type::getInt8Ty(llvmcontext);
+        break;
+    }
     case (TYPE_STR):
     {
         ret = Type::getInt8PtrTy(llvmcontext);

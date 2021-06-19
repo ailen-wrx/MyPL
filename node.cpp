@@ -42,6 +42,12 @@ Value *NInt::codeGen(CodeGenContext &context)
     return ConstantInt::get(Type::getInt32Ty(context.llvmcontext), value, true);
 }
 
+Value *NChar::codeGen(CodeGenContext &context)
+{
+    Log("Char", char(value));
+    return ConstantInt::get(Type::getInt8Ty(context.llvmcontext), value, true);
+}
+
 Value *NStr::codeGen(CodeGenContext &context)
 {
     Log("String", value);
