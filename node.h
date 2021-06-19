@@ -33,7 +33,7 @@ using namespace std;
 #define TYPE_INT 2
 #define TYPE_DOUBLE 3
 #define TYPE_STR 4
-#define TYPE_ARR 5
+#define TYPE_INTARR 5
 #define TYPE_BINOP 6
 #define TYPE_CALL 7
 #define TYPE_ARRIDX 8
@@ -136,7 +136,7 @@ public:
     int size;
     int elementType;
     bool isGlobal;
-    NArray(int s, bool b) : NExp(TYPE_ARR), size(s), isGlobal(b), elementType(-1) {}
+    NArray(int s, bool b) : NExp(TYPE_INTARR), size(s), isGlobal(b), elementType(-1) {}
 
     Value *codeGen(CodeGenContext &context) override;
     string toString() override { return ""; }

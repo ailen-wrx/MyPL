@@ -72,7 +72,7 @@ Type *CodeGenContext::typeToLLVMType(int type)
         ret = Type::getInt8PtrTy(llvmcontext);
         break;
     }
-    case (TYPE_ARR):
+    case (TYPE_INTARR):
     {
         ret = Type::getInt32PtrTy(llvmcontext);
         break;

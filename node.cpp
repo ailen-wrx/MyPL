@@ -18,7 +18,7 @@ Value *NVariable::codeGen(CodeGenContext &context)
         cout << "Unknown variable name" << endl;
         return nullptr;
     }
-    if (context.getType(name) == TYPE_ARR)
+    if (context.getType(name) == TYPE_INTARR)
     {
         // Return pointer to the array.
         ArrayRef<Value *> indices{ConstantInt::get(Type::getInt32Ty(context.llvmcontext), 0, false)};
@@ -265,8 +265,8 @@ Value *NFuncDef::codeGen(CodeGenContext &context)
     vector<Type *> argTypes;
     for (auto i : args)
     {
-        if (context.getType(i) == TYPE_ARR)
-            argTypes.push_back(context.typeToLLVMType(TYPE_ARR));
+        if (context.getType(i) == TYPE_INTARR)
+            argTypes.push_back(context.typeToLLVMType(TYPE_INTARR));
         else
             argTypes.push_back(context.typeToLLVMType(TYPE_INT));
     }
@@ -288,7 +288,7 @@ Value *NFuncDef::codeGen(CodeGenContext &context)
             a.setName(args[index]);
 
             Value *argAlloc;
-            if (context.getType(args[index]) == TYPE_ARR)
+            if (context.getType(args[index]) == TYPE_INTARR)
             {
                 // Allocate pointer for array argument.
                 argAlloc = context.builder.CreateAlloca(PointerType::getInt32PtrTy(context.llvmcontext));
@@ -300,7 +300,7 @@ Value *NFuncDef::codeGen(CodeGenContext &context)
             context.builder.CreateStore(&a, argAlloc);
             context.getCurrentBlock()->localVars[args[index]] = argAlloc;
             context.getCurrentBlock()->localVarTypes[args[index]] =
-                a.getType()->getTypeID() == Type::PointerTyID ? TYPE_ARR : TYPE_INT;
+                a.getType()->getTypeID() == Type::PointerTyID ? TYPE_INTARR : TYPE_INT;
             context.getCurrentBlock()->isFuncArgs[args[index]] = true;
 
             index++;
