@@ -69,19 +69,19 @@ Value *NArray::codeGen(CodeGenContext &context)
     }
     case (TYPE_DOUBLEARR):
     {
-        arraySizeValue = ConstantFP::get(Type::getDoubleTy(context.llvmcontext), size);
+        arraySizeValue = ConstantFP::get(Type::getInt32Ty(context.llvmcontext), size);
         arrayType = ArrayType::get(Type::getDoubleTy(context.llvmcontext), size);
         break;
     }
     case (TYPE_CHARARR):
     {
-        arraySizeValue = ConstantInt::get(Type::getInt8Ty(context.llvmcontext), size);
+        arraySizeValue = ConstantInt::get(Type::getInt32Ty(context.llvmcontext), size);
         arrayType = ArrayType::get(Type::getInt8Ty(context.llvmcontext), size);
         break;
     }
     case (TYPE_STRARR):
     {
-        arraySizeValue = ConstantInt::get(Type::getInt8PtrTy(context.llvmcontext), size);
+        arraySizeValue = ConstantInt::get(Type::getInt32Ty(context.llvmcontext), size);
         arrayType = ArrayType::get(Type::getInt8PtrTy(context.llvmcontext), size);
         break;
     }
