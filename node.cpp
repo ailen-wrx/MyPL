@@ -18,7 +18,8 @@ Value *NVariable::codeGen(CodeGenContext &context)
         cout << "Unknown variable name" << endl;
         return nullptr;
     }
-    if (context.getType(name) == TYPE_ARR)
+    int type = context.getType(name);
+    if (type == TYPE_INTARR || type == TYPE_DOUBLEARR || type == TYPE_STRARR)
     {
         // Return pointer to the array.
         ArrayRef<Value *> indices{ConstantInt::get(Type::getInt32Ty(context.llvmcontext), 0, false)};
@@ -265,8 +266,8 @@ Value *NFuncDef::codeGen(CodeGenContext &context)
     vector<Type *> argTypes;
     for (auto i : args)
     {
-        if (context.getType(i) == TYPE_ARR)
-            argTypes.push_back(context.typeToLLVMType(TYPE_ARR));
+        if (context.getType(i) == TYPE_INTARR)
+            argTypes.push_back(context.typeToLLVMType(TYPE_INTARR));
         else
             argTypes.push_back(context.typeToLLVMType(TYPE_INT));
     }
@@ -288,10 +289,11 @@ Value *NFuncDef::codeGen(CodeGenContext &context)
             a.setName(args[index]);
 
             Value *argAlloc;
-            if (context.getType(args[index]) == TYPE_ARR)
+            int argType = context.getType(args[index]);
+            if (argType == TYPE_INTARR || argType == TYPE_DOUBLEARR || argType == TYPE_STRARR)
             {
                 // Allocate pointer for array argument.
-                argAlloc = context.builder.CreateAlloca(PointerType::getInt32PtrTy(context.llvmcontext));
+                argAlloc = context.builder.CreateAlloca(context.typeToLLVMType(argType));
             }
             else
                 argAlloc = context.builder.CreateAlloca(a.getType());
@@ -300,7 +302,7 @@ Value *NFuncDef::codeGen(CodeGenContext &context)
             context.builder.CreateStore(&a, argAlloc);
             context.getCurrentBlock()->localVars[args[index]] = argAlloc;
             context.getCurrentBlock()->localVarTypes[args[index]] =
-                a.getType()->getTypeID() == Type::PointerTyID ? TYPE_ARR : TYPE_INT;
+                a.getType()->getTypeID() == Type::PointerTyID ? TYPE_INTARR : TYPE_INT;
             context.getCurrentBlock()->isFuncArgs[args[index]] = true;
 
             index++;

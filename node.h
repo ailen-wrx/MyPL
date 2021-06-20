@@ -33,12 +33,14 @@ using namespace std;
 #define TYPE_INT 2
 #define TYPE_DOUBLE 3
 #define TYPE_STR 4
-#define TYPE_ARR 5
+#define TYPE_INTARR 5
 #define TYPE_BINOP 6
 #define TYPE_CALL 7
 #define TYPE_ARRIDX 8
 #define TYPE_IDENTIFIER 9
 #define TYPE_CHAR 10
+#define TYPE_DOUBLEARR 11
+#define TYPE_STRARR 12
 
 #define STMT_TYPE_EXP 21
 #define STMT_TYPE_IF 22
@@ -134,13 +136,12 @@ class NArray : public NExp // array node
 public:
     vector<Value *> elements;
     int size;
-    int elementType;
     bool isGlobal;
-    NArray(int s, bool b) : NExp(TYPE_ARR), size(s), isGlobal(b), elementType(-1) {}
+    NArray(int t, int s, bool b) : NExp(t), size(s), isGlobal(b) {}
 
     Value *codeGen(CodeGenContext &context) override;
     string toString() override { return ""; }
-    bool isDouble(CodeGenContext &context) override { return elementType == TYPE_DOUBLE; }
+    bool isDouble(CodeGenContext &context) override { return type == TYPE_DOUBLEARR; }
 };
 
 class NArrayIndex : public NExp // array index node (e.g. a[3])
