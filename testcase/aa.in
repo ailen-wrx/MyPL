@@ -1,6 +1,6 @@
-a = char[3];
-a[1] = 'a';
-a[0] = 'b';
-a[2] = 0;
-printf("%s",a+1);
+a="abc";
+b=strchr(a,'b');
+c=char[10];
+strncpy(c,b,3);
+printf("%s",c);
 endline();
