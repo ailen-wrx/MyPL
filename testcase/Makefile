@@ -1,4 +1,4 @@
-TESTTARGET = qs
+TESTTARGET = mm
 
 .PHONY: test run selftest qstest mmtest
 

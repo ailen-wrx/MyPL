@@ -266,10 +266,7 @@ Value *NFuncDef::codeGen(CodeGenContext &context)
     vector<Type *> argTypes;
     for (auto i : args)
     {
-        if (context.getType(i) == TYPE_INTARR)
-            argTypes.push_back(context.typeToLLVMType(TYPE_INTARR));
-        else
-            argTypes.push_back(context.typeToLLVMType(TYPE_INT));
+        argTypes.push_back(context.typeToLLVMType(i.first));
     }
 
     // Function declaration.
@@ -286,10 +283,10 @@ Value *NFuncDef::codeGen(CodeGenContext &context)
         int index = 0;
         for (auto &a : f->args())
         {
-            a.setName(args[index]);
+            a.setName(args[index].second);
 
             Value *argAlloc;
-            int argType = context.getType(args[index]);
+            int argType = args[index].first;
             if (argType == TYPE_INTARR || argType == TYPE_DOUBLEARR || argType == TYPE_STRARR)
             {
                 // Allocate pointer for array argument.
@@ -300,10 +297,10 @@ Value *NFuncDef::codeGen(CodeGenContext &context)
 
             // Add arguments to local variables.
             context.builder.CreateStore(&a, argAlloc);
-            context.getCurrentBlock()->localVars[args[index]] = argAlloc;
-            context.getCurrentBlock()->localVarTypes[args[index]] =
+            context.getCurrentBlock()->localVars[args[index].second] = argAlloc;
+            context.getCurrentBlock()->localVarTypes[args[index].second] =
                 a.getType()->getTypeID() == Type::PointerTyID ? TYPE_INTARR : TYPE_INT;
-            context.getCurrentBlock()->isFuncArgs[args[index]] = true;
+            context.getCurrentBlock()->isFuncArgs[args[index].second] = true;
 
             index++;
         }

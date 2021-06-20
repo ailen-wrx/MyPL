@@ -102,11 +102,11 @@ whilestmt:
 	;
 
 expr: 
-	expr TEQUAL expr { $$ = new NBinOp($2, $1, $3);}
-	| expr TPLUS expr { $$ = new NBinOp($2, $1, $3); }
-	| expr TMINUS expr { $$ = new NBinOp($2, $1, $3);}
-	| expr TMUL expr { $$ = new NBinOp($2, $1, $3); }
-	| expr TDIV expr { $$ = new NBinOp($2, $1, $3); }
+	expr TEQUAL expr { $$ = new NBinOp(BINOP_ASSIGN, $1, $3);}
+	| expr TPLUS expr { $$ = new NBinOp(BINOP_PLUS, $1, $3); }
+	| expr TMINUS expr { $$ = new NBinOp(BINOP_MINUS, $1, $3);}
+	| expr TMUL expr { $$ = new NBinOp(BINOP_MUL, $1, $3); }
+	| expr TDIV expr { $$ = new NBinOp(BINOP_DIV, $1, $3); }
 	| TDOUBLE { $$ = new NDouble($1); }
 	| TINT { $$ = new NInt($1); }
 	| TMINUS TINT { $$ = new NInt(-$1); }
@@ -119,24 +119,31 @@ expr:
 
 boolexpr:
 	expr comparison expr { $$ = new NBinOp($2, $1, $3); }
-	| boolexpr TAND boolexpr { $$ = new NBinOp($2, $1, $3); }
-	| boolexpr TOR boolexpr { $$ = new NBinOp($2, $1, $3); }
+	| boolexpr TAND boolexpr { $$ = new NBinOp(BINOP_AND, $1, $3); }
+	| boolexpr TOR boolexpr { $$ = new NBinOp(BINOP_OR, $1, $3); }
 	;
 
 comparison:
-	TCEQ | TCNE | TCLT | TCLE | TCGT | TCGE | TAND | TOR
+	TCEQ { $$=BINOP_CEQ; }
+	| TCNE { $$=BINOP_CNE; }
+	| TCLT { $$=BINOP_CLT; }
+	| TCLE { $$=BINOP_CLE; }
+	| TCGT { $$=BINOP_CGT; }
+	| TCGE { $$=BINOP_CGE; }
+	| TAND { $$=BINOP_AND; }
+	| TOR  { $$=BINOP_OR; }
 	;
 
 arraydecl: 
-	TGLOBAL TLBRACKET TINT TRBRACKET { $$ = new NArray(TYPE_INTARR, $3, true); }
-	| TLBRACKET TINT TRBRACKET { $$ = new NArray(TYPE_INTARR, $3, false); }
+	TGLOBAL types TLBRACKET TINT TRBRACKET { $$ = new NArray($2, $4, true); }
+	| types TLBRACKET TINT TRBRACKET { $$ = new NArray($1, $3, false); }
 	;
 
 types:
-	TYPEINT { $$ = 1; }
-	| TYPEDOUBLE { $$ = 2; }
-	| TYPECHAR { $$ = 3; }
-	| TYPESTRING { $$ = 4; }
+	TYPEINT { $$ = TYPE_INT; }
+	| TYPEDOUBLE { $$ = TYPE_DOUBLE; }
+	| TYPECHAR { $$ = TYPE_CHAR; }
+	| TYPESTRING { $$ = TYPE_STR; }
 	;
 
 arrayindex:

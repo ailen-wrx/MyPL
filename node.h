@@ -137,7 +137,17 @@ public:
     vector<Value *> elements;
     int size;
     bool isGlobal;
-    NArray(int t, int s, bool b) : NExp(t), size(s), isGlobal(b) {}
+    NArray(int t, int s, bool b) : NExp(t), size(s), isGlobal(b)
+    {
+        if (t == TYPE_INT)
+            type = TYPE_INTARR;
+        else if (t == TYPE_DOUBLE)
+            type = TYPE_DOUBLE;
+        else if (t == TYPE_CHAR)
+            type = TYPE_STR;
+        else if (t == TYPE_STR)
+            type = TYPE_STRARR;
+    }
 
     Value *codeGen(CodeGenContext &context) override;
     string toString() override { return ""; }
