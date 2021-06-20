@@ -1,4 +1,4 @@
-# MyPL编程语言编译器 Documentation
+# Documentation
 
 ## 1	概述
 本项目是基于c++，使用flex, bison, LLVM等工具实现的MyPL编程语言语法编译器，使用flex, bison对源代码进行词法、语法分析；在语法分析阶段生成整个源代码相应的抽象语法树，根据LLVM IR中定义的中间代码语法输出中间代码；最后通过调用LLVM 后端模块的接口，根据本地指令集与操作系统架构，将中间代码编译成二进制目标代码。编译生成的目标代码之后可直接编译生成可执行文件，或与其他目标代码链接生成可执行文件。
@@ -48,7 +48,7 @@ $ blk\rightarrow\ \{\ stmts\ \}\ |\ \{\} $
 
 $ funcdef\rightarrow {\rm def}\  \textbf {vairable}\ (\ funcargs\ )\ blk\ |\ {\rm extern}\ {\rm def}\  \textbf {vairable}\ (\ funcargs\ )\ blk $
 
-$ funcargs\rightarrow |\ \textbf {vairable}\ |\ funcargs\ ; \textbf {vairable} $
+$ funcargs\rightarrow |\ \textbf {type}\ \textbf {vairable}\ |\ funcargs\ ; \textbf {type}\ \textbf {vairable} $
 
 $ ifstmt\rightarrow {\rm if}\ (\ boolexpr\ )\ blk\ {\rm else}\ blk $
 
@@ -56,11 +56,11 @@ $ whilestmt\rightarrow {\rm while}\ (\ boolexpr\ )\ blk $
 
 $ expr\rightarrow expr\ =\ expr\ |\ expr\ +\ expr\ |\ expr\ -\ expr\ |\ expr\ *\ expr\ |\ expr\ /\ expr\ $
 
-$\ \ \ \ \ \ \ \ \ \ \ \ \ |\ \textbf{double}\ |\ \textbf{int}\ |\ -\textbf{int}\ |\ \textbf{string}\ |\ \textbf{varaible}\ |\ arraydecl\ |\ arrayindex\ |\ callfunc $
+$\ \ \ \ \ \ \ \ \ \ \ \ \ |\ \textbf{double}\ |\ \textbf{int}\ |\ -\textbf{int}\ |\ \textbf{string}\ |\   \textbf {char}\ |\ \textbf{varaible}\ |\ arraydecl\ |\ arrayindex\ |\ callfunc $
 
 $ boolexpr\rightarrow expr\ \textbf {comparison}\ expr\ |\ boolexpr\ {\rm and}\ boolexpr\ | \ boolexpr\ {\rm or}\ boolexpr\ $
 
-$ arraydecl\rightarrow {\rm global}\ [\ \textbf{int}\ ]\ |\ [\ \textbf{int}\ ] $
+$ arraydecl\rightarrow {\rm global}\ \textbf {type}\ [\ \textbf{int}\ ]\ |\ \textbf {type}\ [\ \textbf{int}\ ] $
 
 $ arrayindex\rightarrow \textbf{variable}\ [\ expr\ ]\  $
 
