@@ -34,7 +34,7 @@ Value *binaryAssign(CodeGenContext &context, NExp *left, NExp *right)
             // Not found. `lvar` undefined.
             context.getCurrentBlock()->localVarTypes[lvar->name] = targetType;
 
-            if (targetType == TYPE_INTARR || targetType == TYPE_DOUBLEARR || targetType == TYPE_STRARR)
+            if (targetType == TYPE_INTARR || targetType == TYPE_DOUBLEARR || targetType == TYPE_STRARR || targetType == TYPE_CHARARR)
             {
                 // Array declaration.
                 context.getCurrentBlock()->localVars[lvar->name] = rval;

@@ -19,7 +19,7 @@ Value *NVariable::codeGen(CodeGenContext &context)
         return nullptr;
     }
     int type = context.getType(name);
-    if (type == TYPE_INTARR || type == TYPE_DOUBLEARR || type == TYPE_STRARR)
+    if (type == TYPE_INTARR || type == TYPE_DOUBLEARR || type == TYPE_STRARR || type == TYPE_CHARARR)
     {
         // Return pointer to the array.
         ArrayRef<Value *> indices{ConstantInt::get(Type::getInt32Ty(context.llvmcontext), 0, false)};
@@ -57,8 +57,35 @@ Value *NStr::codeGen(CodeGenContext &context)
 
 Value *NArray::codeGen(CodeGenContext &context)
 {
-    Value *arraySizeValue = ConstantInt::get(Type::getInt32Ty(context.llvmcontext), size);
-    ArrayType *arrayType = ArrayType::get(context.typeToLLVMType(TYPE_INT), size);
+    Value *arraySizeValue;
+    ArrayType *arrayType;
+    switch (type)
+    {
+    case (TYPE_INTARR):
+    {
+        arraySizeValue = ConstantInt::get(Type::getInt32Ty(context.llvmcontext), size);
+        arrayType = ArrayType::get(Type::getInt32Ty(context.llvmcontext), size);
+        break;
+    }
+    case (TYPE_DOUBLEARR):
+    {
+        arraySizeValue = ConstantFP::get(Type::getDoubleTy(context.llvmcontext), size);
+        arrayType = ArrayType::get(Type::getDoubleTy(context.llvmcontext), size);
+        break;
+    }
+    case (TYPE_CHARARR):
+    {
+        arraySizeValue = ConstantInt::get(Type::getInt8Ty(context.llvmcontext), size);
+        arrayType = ArrayType::get(Type::getInt8Ty(context.llvmcontext), size);
+        break;
+    }
+    case (TYPE_STRARR):
+    {
+        arraySizeValue = ConstantInt::get(Type::getInt8PtrTy(context.llvmcontext), size);
+        arrayType = ArrayType::get(Type::getInt8PtrTy(context.llvmcontext), size);
+        break;
+    }
+    }
 
     ConstantAggregateZero *constArray = ConstantAggregateZero::get(arrayType);
 
@@ -84,6 +111,7 @@ NArray *NArrayIndex::getArrayNode(CodeGenContext &context)
 
 Value *NArrayIndex::codeGen(CodeGenContext &context)
 {
+    NArray *arrayNode = context.getArrayNode(arrName);
     Value *arrPtr = context.getSymbolValue(arrName);
     if (!arrPtr)
     {
@@ -109,11 +137,12 @@ Value *NArrayIndex::codeGen(CodeGenContext &context)
         ptr = context.builder.CreateInBoundsGEP(arrPtr, normalIndices, "elementPtr");
     }
 
-    return context.builder.CreateAlignedLoad(ptr, MaybeAlign(4));
+    return context.builder.CreateLoad(ptr);
 }
 
 Value *NArrayIndex::modify(CodeGenContext &context, Value *newVal)
 {
+    NArray *arrayNode = context.getArrayNode(arrName);
     Value *arrPtr = context.getSymbolValue(arrName);
     if (!arrPtr)
     {
@@ -122,6 +151,7 @@ Value *NArrayIndex::modify(CodeGenContext &context, Value *newVal)
     }
 
     Value *indexValue = index->codeGen(context);
+
     vector<Value *> normalIndicesVec{ConstantInt::get(Type::getInt32Ty(context.llvmcontext), 0), indexValue};
     ArrayRef<Value *> normalIndices(normalIndicesVec);
     ArrayRef<Value *> argIndices{indexValue};
@@ -138,7 +168,7 @@ Value *NArrayIndex::modify(CodeGenContext &context, Value *newVal)
         ptr = context.builder.CreateInBoundsGEP(arrPtr, normalIndices, "elementPtr");
     }
 
-    return context.builder.CreateAlignedStore(newVal, ptr, MaybeAlign(4));
+    return context.builder.CreateStore(newVal, ptr);
 }
 
 Value *NBinOp::codeGen(CodeGenContext &context)
@@ -287,7 +317,7 @@ Value *NFuncDef::codeGen(CodeGenContext &context)
 
             Value *argAlloc;
             int argType = args[index].first;
-            if (argType == TYPE_INTARR || argType == TYPE_DOUBLEARR || argType == TYPE_STRARR)
+            if (argType == TYPE_INTARR || argType == TYPE_DOUBLEARR || argType == TYPE_STRARR || argType == TYPE_CHARARR)
             {
                 // Allocate pointer for array argument.
                 argAlloc = context.builder.CreateAlloca(context.typeToLLVMType(argType));

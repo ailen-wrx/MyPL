@@ -41,6 +41,7 @@ using namespace std;
 #define TYPE_CHAR 10
 #define TYPE_DOUBLEARR 11
 #define TYPE_STRARR 12
+#define TYPE_CHARARR 13
 
 #define STMT_TYPE_EXP 21
 #define STMT_TYPE_IF 22
@@ -144,7 +145,7 @@ public:
         else if (t == TYPE_DOUBLE)
             type = TYPE_DOUBLE;
         else if (t == TYPE_CHAR)
-            type = TYPE_STR;
+            type = TYPE_CHARARR;
         else if (t == TYPE_STR)
             type = TYPE_STRARR;
     }

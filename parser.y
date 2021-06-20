@@ -111,6 +111,7 @@ expr:
 	| TINT { $$ = new NInt($1); }
 	| TMINUS TINT { $$ = new NInt(-$1); }
 	| TSTRING { $$ = new NStr(*$1); }
+	| TCHAR { $$ = new NChar($1); }
 	| TVAR   { $$ = new NVariable(*$1);}
 	| arraydecl { $$ = $1; }
 	| arrayindex { $$ = $1; }

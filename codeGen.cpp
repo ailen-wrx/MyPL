@@ -87,6 +87,11 @@ Type *CodeGenContext::typeToLLVMType(int type)
         ret = PointerType::get(Type::getInt8PtrTy(llvmcontext), 0);
         break;
     }
+    case (TYPE_CHARARR):
+    {
+        ret = Type::getInt8PtrTy(llvmcontext);
+        break;
+    }
     }
     return ret;
 }
