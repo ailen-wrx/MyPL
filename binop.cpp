@@ -108,28 +108,60 @@ Value *binaryClt(CodeGenContext &context, NExp *left, NExp *right)
     if (left->isDouble(context) || right->isDouble(context))
         return context.builder.CreateFCmpOLT(left->codeGen(context), right->codeGen(context), "cmpftmp");
     else
-        return context.builder.CreateICmpSLT(left->codeGen(context), right->codeGen(context), "cmptmp");
+    {
+        Value *lval = left->codeGen(context);
+        Instruction::CastOps cast_op = CastInst::getCastOpcode(lval, true, Type::getInt32Ty(context.llvmcontext), true);
+        lval = context.builder.CreateCast(cast_op, lval, Type::getInt32Ty(context.llvmcontext));
+        Value *rval = right->codeGen(context);
+        cast_op = CastInst::getCastOpcode(rval, true, Type::getInt32Ty(context.llvmcontext), true);
+        rval = context.builder.CreateCast(cast_op, rval, Type::getInt32Ty(context.llvmcontext));
+        return context.builder.CreateICmpSLT(lval, rval, "cmptmp");
+    }
 }
 Value *binaryCle(CodeGenContext &context, NExp *left, NExp *right)
 {
     if (left->isDouble(context) || right->isDouble(context))
         return context.builder.CreateFCmpOLE(left->codeGen(context), right->codeGen(context), "cmpftmp");
     else
-        return context.builder.CreateICmpSLE(left->codeGen(context), right->codeGen(context), "cmptmp");
+    {
+        Value *lval = left->codeGen(context);
+        Instruction::CastOps cast_op = CastInst::getCastOpcode(lval, true, Type::getInt32Ty(context.llvmcontext), true);
+        lval = context.builder.CreateCast(cast_op, lval, Type::getInt32Ty(context.llvmcontext));
+        Value *rval = right->codeGen(context);
+        cast_op = CastInst::getCastOpcode(rval, true, Type::getInt32Ty(context.llvmcontext), true);
+        rval = context.builder.CreateCast(cast_op, rval, Type::getInt32Ty(context.llvmcontext));
+        return context.builder.CreateICmpSLE(lval, rval, "cmptmp");
+    }
 }
 Value *binaryCge(CodeGenContext &context, NExp *left, NExp *right)
 {
     if (left->isDouble(context) || right->isDouble(context))
         return context.builder.CreateFCmpOGE(left->codeGen(context), right->codeGen(context), "cmpftmp");
     else
-        return context.builder.CreateICmpSGE(left->codeGen(context), right->codeGen(context), "cmptmp");
+    {
+        Value *lval = left->codeGen(context);
+        Instruction::CastOps cast_op = CastInst::getCastOpcode(lval, true, Type::getInt32Ty(context.llvmcontext), true);
+        lval = context.builder.CreateCast(cast_op, lval, Type::getInt32Ty(context.llvmcontext));
+        Value *rval = right->codeGen(context);
+        cast_op = CastInst::getCastOpcode(rval, true, Type::getInt32Ty(context.llvmcontext), true);
+        rval = context.builder.CreateCast(cast_op, rval, Type::getInt32Ty(context.llvmcontext));
+        return context.builder.CreateICmpSGE(lval, rval, "cmptmp");
+    }
 }
 Value *binaryCgt(CodeGenContext &context, NExp *left, NExp *right)
 {
     if (left->isDouble(context) || right->isDouble(context))
         return context.builder.CreateFCmpOGT(left->codeGen(context), right->codeGen(context), "cmpftmp");
     else
-        return context.builder.CreateICmpSGT(left->codeGen(context), right->codeGen(context), "cmptmp");
+    {
+        Value *lval = left->codeGen(context);
+        Instruction::CastOps cast_op = CastInst::getCastOpcode(lval, true, Type::getInt32Ty(context.llvmcontext), true);
+        lval = context.builder.CreateCast(cast_op, lval, Type::getInt32Ty(context.llvmcontext));
+        Value *rval = right->codeGen(context);
+        cast_op = CastInst::getCastOpcode(rval, true, Type::getInt32Ty(context.llvmcontext), true);
+        rval = context.builder.CreateCast(cast_op, rval, Type::getInt32Ty(context.llvmcontext));
+        return context.builder.CreateICmpSGT(lval, rval, "cmptmp");
+    }
 }
 Value *binaryCeq(CodeGenContext &context, NExp *left, NExp *right)
 {
@@ -137,14 +169,30 @@ Value *binaryCeq(CodeGenContext &context, NExp *left, NExp *right)
 
         return context.builder.CreateFCmpOEQ(left->codeGen(context), right->codeGen(context), "cmpftmp");
     else
-        return context.builder.CreateICmpEQ(left->codeGen(context), right->codeGen(context), "cmptmp");
+    {
+        Value *lval = left->codeGen(context);
+        Instruction::CastOps cast_op = CastInst::getCastOpcode(lval, true, Type::getInt32Ty(context.llvmcontext), true);
+        lval = context.builder.CreateCast(cast_op, lval, Type::getInt32Ty(context.llvmcontext));
+        Value *rval = right->codeGen(context);
+        cast_op = CastInst::getCastOpcode(rval, true, Type::getInt32Ty(context.llvmcontext), true);
+        rval = context.builder.CreateCast(cast_op, rval, Type::getInt32Ty(context.llvmcontext));
+        return context.builder.CreateICmpEQ(lval, rval, "cmptmp");
+    }
 }
 Value *binaryCne(CodeGenContext &context, NExp *left, NExp *right)
 {
     if (left->isDouble(context) || right->isDouble(context))
         return context.builder.CreateFCmpONE(left->codeGen(context), right->codeGen(context), "cmpftmp");
     else
-        return context.builder.CreateICmpNE(left->codeGen(context), right->codeGen(context), "cmptmp");
+    {
+        Value *lval = left->codeGen(context);
+        Instruction::CastOps cast_op = CastInst::getCastOpcode(lval, true, Type::getInt32Ty(context.llvmcontext), true);
+        lval = context.builder.CreateCast(cast_op, lval, Type::getInt32Ty(context.llvmcontext));
+        Value *rval = right->codeGen(context);
+        cast_op = CastInst::getCastOpcode(rval, true, Type::getInt32Ty(context.llvmcontext), true);
+        rval = context.builder.CreateCast(cast_op, rval, Type::getInt32Ty(context.llvmcontext));
+        return context.builder.CreateICmpNE(lval, rval, "cmptmp");
+    }
 }
 Value *binaryAnd(CodeGenContext &context, NExp *left, NExp *right)
 {
