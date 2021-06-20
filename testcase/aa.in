@@ -12,14 +12,15 @@ take_course=int[100];
 dependency=string[100];
 
 input_buf=char[250];
-old_i=0;
-new_i=0;
-tmp=0;
-this_credit=0;
 
 gets(input_buf);
 while( input_buf[0]!=0 ){
-    printf("%s",input_buf);
+	oldi = 0;
+	course_name[course_count] = char[40];
+	memset(course_name[course_count], 0, 40);
+	strncpy(course_name[course_count], input_buf +0, 5);
+
+    printf("%s",course_name[course_count]);
     endline();
     gets(input_buf);
 }

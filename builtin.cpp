@@ -232,15 +232,19 @@ void initializeBuiltinFunction(CodeGenContext &context)
     Function::Create(inoutFuncType, Function::ExternalLinkage, "scanf", context.module);
     Function::Create(inoutFuncType, Function::ExternalLinkage, "gets", context.module);
     Function::Create(inoutFuncType, Function::ExternalLinkage, "memset", context.module);
-    Function::Create(inoutFuncType, Function::ExternalLinkage, "strncpy", context.module);
     Function::Create(inoutFuncType, Function::ExternalLinkage, "sscanf", context.module);
     Function::Create(inoutFuncType, Function::ExternalLinkage, "strcmp", context.module);
 
     endlineValue = context.builder.CreateGlobalString("\n", "endline");
 
     std::vector<Type *> strchrFuncArgs = {Type::getInt8PtrTy(context.llvmcontext), Type::getInt8Ty(context.llvmcontext)};
-    FunctionType *strchrFuncType = FunctionType::get(context.builder.getInt8PtrTy(), strchrFuncArgs, true);
+    FunctionType *strchrFuncType = FunctionType::get(context.builder.getInt32Ty(), strchrFuncArgs, true);
     Function::Create(strchrFuncType, Function::ExternalLinkage, "strchr", context.module);
+
+    std::vector<Type *> strncpyFuncArgs = {Type::getInt8PtrTy(context.llvmcontext), Type::getInt8PtrTy(context.llvmcontext),
+                                           Type::getInt32Ty(context.llvmcontext)};
+    FunctionType *strncpyFuncType = FunctionType::get(context.builder.getInt32Ty(), strchrFuncArgs, true);
+    Function::Create(strchrFuncType, Function::ExternalLinkage, "strncpy", context.module);
 
     // Add function pointer to the `map`.
     BuiltinFunction["printf"] = BuiltinPrintf;
