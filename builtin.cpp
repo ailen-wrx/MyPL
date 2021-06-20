@@ -243,8 +243,8 @@ void initializeBuiltinFunction(CodeGenContext &context)
 
     std::vector<Type *> strncpyFuncArgs = {Type::getInt8PtrTy(context.llvmcontext), Type::getInt8PtrTy(context.llvmcontext),
                                            Type::getInt32Ty(context.llvmcontext)};
-    FunctionType *strncpyFuncType = FunctionType::get(context.builder.getInt32Ty(), strchrFuncArgs, true);
-    Function::Create(strchrFuncType, Function::ExternalLinkage, "strncpy", context.module);
+    FunctionType *strncpyFuncType = FunctionType::get(context.builder.getInt32Ty(), strncpyFuncArgs, true);
+    Function::Create(strncpyFuncType, Function::ExternalLinkage, "strncpy", context.module);
 
     // Add function pointer to the `map`.
     BuiltinFunction["printf"] = BuiltinPrintf;

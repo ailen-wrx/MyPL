@@ -16,11 +16,11 @@ input_buf=char[250];
 gets(input_buf);
 while( input_buf[0]!=0 ){
 	oldi = 0;
-	course_name[course_count] = char[40];
-	memset(course_name[course_count], 0, 40);
-	strncpy(course_name[course_count], input_buf +0, 5);
+	a = char[40];
+	memset(a, 0, 40);
+	strncpy(a, input_buf + oldi, 5);
 
-    printf("%s",course_name[course_count]);
+    printf("%s",a);
     endline();
     gets(input_buf);
 }
