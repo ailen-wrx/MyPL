@@ -17,7 +17,7 @@ extern int yylex();
 {
     Node* node;
 	NBlock* block;
-	vector<string>* stringVec;
+	vector<pair<int, string>>* intstrVec;
 	vector<NExp *>* NExpVec;
 	NArray* array;
 	NArrayIndex* index;
@@ -44,12 +44,12 @@ extern int yylex();
 %type <block> program stmts blk
 %type <exp> expr boolexpr
 %type <stmt> stmt ifstmt whilestmt funcdef
-%type <stringVec> funcargs
+%type <intstrVec> funcargs
 %type <NExpVec> funcvars
 %type <array> arraydecl
 %type <index> arrayindex
 %type <call> callfunc
-%type <token> comparison
+%type <token> comparison types
 
 
 %left TEQUAL
@@ -88,9 +88,9 @@ funcdef:
 	;
 
 funcargs: 
-	%empty { $$=new vector<string>();}
-	| TVAR { $$=new vector<string>(); $$->push_back(*$1); }
-	| funcargs TCOMMA TVAR { $$=$1; $$->push_back(*$3); }
+	%empty { $$=new vector<pair<int, string>>();}
+	| types TVAR { $$=new vector<pair<int, string>>(); $$->push_back(make_pair($1, *$2)); }
+	| funcargs TCOMMA types TVAR { $$=$1; $$->push_back(make_pair($3, *$4)); }
 	;
 
 ifstmt: 
@@ -130,6 +130,13 @@ comparison:
 arraydecl: 
 	TGLOBAL TLBRACKET TINT TRBRACKET { $$ = new NArray(TYPE_INTARR, $3, true); }
 	| TLBRACKET TINT TRBRACKET { $$ = new NArray(TYPE_INTARR, $3, false); }
+	;
+
+types:
+	TYPEINT { $$ = 1; }
+	| TYPEDOUBLE { $$ = 2; }
+	| TYPECHAR { $$ = 3; }
+	| TYPESTRING { $$ = 4; }
 	;
 
 arrayindex:

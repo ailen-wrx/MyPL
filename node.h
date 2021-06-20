@@ -253,20 +253,20 @@ class NFuncDef : public NStmt // function definition node
 {
 public:
     string name;
-    vector<string> args;
+    vector<pair<int, string>> args;
     NBlock *body;
     bool isExternal;
 
-    NFuncDef(string n, vector<string> *a, NBlock *b)
+    NFuncDef(string n, vector<pair<int, string>> *a, NBlock *b)
         : NStmt(STMT_TYPE_FUNDEF), name(n), args(*a), body(b), isExternal(false) {}
-    NFuncDef(string n, vector<string> *a)
+    NFuncDef(string n, vector<pair<int, string>> *a)
         : NStmt(STMT_TYPE_FUNDEF), name(n), args(*a), body(nullptr), isExternal(true) {}
     Value *codeGen(CodeGenContext &context) override;
     string toString() override
     {
         string ret = " DEF " + name + ": ";
         for (auto i : args)
-            ret += i + ", ";
+            ret += i.second + ", ";
         ret += "\n  " + body->toString();
         return ret;
     };
