@@ -109,6 +109,7 @@ Value *binaryClt(CodeGenContext &context, NExp *left, NExp *right)
         return context.builder.CreateFCmpOLT(left->codeGen(context), right->codeGen(context), "cmpftmp");
     else
     {
+        // Cast to same type
         Value *lval = left->codeGen(context);
         Instruction::CastOps cast_op = CastInst::getCastOpcode(lval, true, Type::getInt32Ty(context.llvmcontext), true);
         lval = context.builder.CreateCast(cast_op, lval, Type::getInt32Ty(context.llvmcontext));
