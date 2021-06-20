@@ -17,7 +17,7 @@ extern int yylex();
 {
     Node* node;
 	NBlock* block;
-	vector<string>* stringVec;
+	vector<pair<int, string>>* intstrVec;
 	vector<NExp *>* NExpVec;
 	NArray* array;
 	NArrayIndex* index;
@@ -32,6 +32,7 @@ extern int yylex();
 }
 
 %token <str> TVAR TSTRING
+%token <token> TYPEINT TYPEDOUBLE TYPECHAR TYPESTRING
 %token <token> TEQUAL TPLUS TMINUS TMUL TDIV TMOD
 %token <token> TCEQ TCNE TCLT TCLE TCGT TCGE TAND TOR
 %token <token> TIF TELSE TFOR TRETURN TDEF TWHILE TEXTERN TGLOBAL
@@ -43,12 +44,12 @@ extern int yylex();
 %type <block> program stmts blk
 %type <exp> expr boolexpr
 %type <stmt> stmt ifstmt whilestmt funcdef
-%type <stringVec> funcargs
+%type <intstrVec> funcargs
 %type <NExpVec> funcvars
 %type <array> arraydecl
 %type <index> arrayindex
 %type <call> callfunc
-%type <token> comparison
+%type <token> comparison types
 
 
 %left TEQUAL
@@ -87,9 +88,9 @@ funcdef:
 	;
 
 funcargs: 
-	%empty { $$=new vector<string>();}
-	| TVAR { $$=new vector<string>(); $$->push_back(*$1); }
-	| funcargs TCOMMA TVAR { $$=$1; $$->push_back(*$3); }
+	%empty { $$=new vector<pair<int, string>>();}
+	| types TVAR { $$=new vector<pair<int, string>>(); $$->push_back(make_pair($1, *$2)); }
+	| funcargs TCOMMA types TVAR { $$=$1; $$->push_back(make_pair($3, *$4)); }
 	;
 
 ifstmt: 
@@ -101,15 +102,16 @@ whilestmt:
 	;
 
 expr: 
-	expr TEQUAL expr { $$ = new NBinOp($2, $1, $3);}
-	| expr TPLUS expr { $$ = new NBinOp($2, $1, $3); }
-	| expr TMINUS expr { $$ = new NBinOp($2, $1, $3);}
-	| expr TMUL expr { $$ = new NBinOp($2, $1, $3); }
-	| expr TDIV expr { $$ = new NBinOp($2, $1, $3); }
+	expr TEQUAL expr { $$ = new NBinOp(BINOP_ASSIGN, $1, $3);}
+	| expr TPLUS expr { $$ = new NBinOp(BINOP_PLUS, $1, $3); }
+	| expr TMINUS expr { $$ = new NBinOp(BINOP_MINUS, $1, $3);}
+	| expr TMUL expr { $$ = new NBinOp(BINOP_MUL, $1, $3); }
+	| expr TDIV expr { $$ = new NBinOp(BINOP_DIV, $1, $3); }
 	| TDOUBLE { $$ = new NDouble($1); }
 	| TINT { $$ = new NInt($1); }
 	| TMINUS TINT { $$ = new NInt(-$1); }
 	| TSTRING { $$ = new NStr(*$1); }
+	| TCHAR { $$ = new NChar($1); }
 	| TVAR   { $$ = new NVariable(*$1);}
 	| arraydecl { $$ = $1; }
 	| arrayindex { $$ = $1; }
@@ -118,17 +120,31 @@ expr:
 
 boolexpr:
 	expr comparison expr { $$ = new NBinOp($2, $1, $3); }
-	| boolexpr TAND boolexpr { $$ = new NBinOp($2, $1, $3); }
-	| boolexpr TOR boolexpr { $$ = new NBinOp($2, $1, $3); }
+	| boolexpr TAND boolexpr { $$ = new NBinOp(BINOP_AND, $1, $3); }
+	| boolexpr TOR boolexpr { $$ = new NBinOp(BINOP_OR, $1, $3); }
 	;
 
 comparison:
-	TCEQ | TCNE | TCLT | TCLE | TCGT | TCGE | TAND | TOR
+	TCEQ { $$=BINOP_CEQ; }
+	| TCNE { $$=BINOP_CNE; }
+	| TCLT { $$=BINOP_CLT; }
+	| TCLE { $$=BINOP_CLE; }
+	| TCGT { $$=BINOP_CGT; }
+	| TCGE { $$=BINOP_CGE; }
+	| TAND { $$=BINOP_AND; }
+	| TOR  { $$=BINOP_OR; }
 	;
 
 arraydecl: 
-	TGLOBAL TLBRACKET TINT TRBRACKET { $$ = new NArray($3, true); }
-	| TLBRACKET TINT TRBRACKET { $$ = new NArray($3, false); }
+	TGLOBAL types TLBRACKET TINT TRBRACKET { $$ = new NArray($2, $4, true); }
+	| types TLBRACKET TINT TRBRACKET { $$ = new NArray($1, $3, false); }
+	;
+
+types:
+	TYPEINT { $$ = TYPE_INT; }
+	| TYPEDOUBLE { $$ = TYPE_DOUBLE; }
+	| TYPECHAR { $$ = TYPE_CHAR; }
+	| TYPESTRING { $$ = TYPE_STR; }
 	;
 
 arrayindex:

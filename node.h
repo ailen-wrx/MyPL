@@ -33,17 +33,21 @@ using namespace std;
 #define TYPE_INT 2
 #define TYPE_DOUBLE 3
 #define TYPE_STR 4
-#define TYPE_ARR 5
+#define TYPE_INTARR 5
 #define TYPE_BINOP 6
 #define TYPE_CALL 7
 #define TYPE_ARRIDX 8
 #define TYPE_IDENTIFIER 9
+#define TYPE_CHAR 10
+#define TYPE_DOUBLEARR 11
+#define TYPE_STRARR 12
+#define TYPE_CHARARR 13
 
-#define STMT_TYPE_EXP 11
-#define STMT_TYPE_IF 12
-#define STMT_TYPE_WHILE 13
-#define STMT_TYPE_FUNDEF 14
-#define STMT_TYPE_RET 15
+#define STMT_TYPE_EXP 21
+#define STMT_TYPE_IF 22
+#define STMT_TYPE_WHILE 23
+#define STMT_TYPE_FUNDEF 24
+#define STMT_TYPE_RET 25
 
 class CodeGenContext;
 
@@ -108,6 +112,16 @@ public:
     }
 };
 
+class NChar : public NExp
+{
+public:
+    int value;
+    NChar(char c) : NExp(TYPE_CHAR), value(int(c)) {}
+    Value *codeGen(CodeGenContext &context) override;
+    string toString() override { return to_string(char(value)); };
+    bool isDouble(CodeGenContext &context) override { return false; }
+};
+
 class NStr : public NExp // string node
 {
 public:
@@ -115,10 +129,7 @@ public:
     NStr(string v) : NExp(TYPE_STR), value(v.substr(1, v.length() - 2)) {}
     Value *codeGen(CodeGenContext &context) override;
     string toString() override { return value; };
-    bool isDouble(CodeGenContext &context) override
-    {
-        return false;
-    }
+    bool isDouble(CodeGenContext &context) override { return false; }
 };
 
 class NArray : public NExp // array node
@@ -126,16 +137,22 @@ class NArray : public NExp // array node
 public:
     vector<Value *> elements;
     int size;
-    int elementType;
     bool isGlobal;
-    NArray(int s, bool b) : NExp(TYPE_ARR), size(s), isGlobal(b), elementType(-1) {}
+    NArray(int t, int s, bool b) : NExp(t), size(s), isGlobal(b)
+    {
+        if (t == TYPE_INT)
+            type = TYPE_INTARR;
+        else if (t == TYPE_DOUBLE)
+            type = TYPE_DOUBLE;
+        else if (t == TYPE_CHAR)
+            type = TYPE_CHARARR;
+        else if (t == TYPE_STR)
+            type = TYPE_STRARR;
+    }
 
     Value *codeGen(CodeGenContext &context) override;
     string toString() override { return ""; }
-    bool isDouble(CodeGenContext &context) override
-    {
-        return elementType == TYPE_DOUBLE;
-    }
+    bool isDouble(CodeGenContext &context) override { return type == TYPE_DOUBLEARR; }
 };
 
 class NArrayIndex : public NExp // array index node (e.g. a[3])
@@ -153,10 +170,7 @@ public:
     {
         return arrName + " [ " + index->toString() + " ] ";
     }
-    bool isDouble(CodeGenContext &context) override
-    {
-        return false;
-    }
+    bool isDouble(CodeGenContext &context) override { return false; }
 };
 
 class NBinOp : public NExp // binary operation node
@@ -250,20 +264,20 @@ class NFuncDef : public NStmt // function definition node
 {
 public:
     string name;
-    vector<string> args;
+    vector<pair<int, string>> args;
     NBlock *body;
     bool isExternal;
 
-    NFuncDef(string n, vector<string> *a, NBlock *b)
+    NFuncDef(string n, vector<pair<int, string>> *a, NBlock *b)
         : NStmt(STMT_TYPE_FUNDEF), name(n), args(*a), body(b), isExternal(false) {}
-    NFuncDef(string n, vector<string> *a)
+    NFuncDef(string n, vector<pair<int, string>> *a)
         : NStmt(STMT_TYPE_FUNDEF), name(n), args(*a), body(nullptr), isExternal(true) {}
     Value *codeGen(CodeGenContext &context) override;
     string toString() override
     {
         string ret = " DEF " + name + ": ";
         for (auto i : args)
-            ret += i + ", ";
+            ret += i.second + ", ";
         ret += "\n  " + body->toString();
         return ret;
     };

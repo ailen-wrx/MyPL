@@ -1,7 +1,7 @@
-a=global[20];
+a=global int[10000];
 n=0;
 cnt=0;
-def qs(l,r)
+def qs(int l,int r)
 {
     if (l<r)
     {
