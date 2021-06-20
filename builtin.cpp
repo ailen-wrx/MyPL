@@ -63,19 +63,6 @@ Value *BuiltinScanf(CodeGenContext &context, vector<NExp *> &args)
     {
         NArrayIndex *targetArridx = static_cast<NArrayIndex *>(args[1]);
         NArray *targetArray = context.arrays[targetArridx->arrName];
-        if (targetArray)
-        {
-            if (targetArray->elementType == -1)
-            {
-                // First assignment. Type binding.
-                targetArray->type = TYPE_INT;
-            }
-            else if (targetArray->elementType != TYPE_INT)
-            {
-                cout << "Fail to match variables." << endl;
-                break;
-            }
-        }
 
         targetArridx->modify(context, val);
         break;

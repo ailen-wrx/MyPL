@@ -77,6 +77,16 @@ Type *CodeGenContext::typeToLLVMType(int type)
         ret = Type::getInt32PtrTy(llvmcontext);
         break;
     }
+    case (TYPE_DOUBLEARR):
+    {
+        ret = Type::getDoublePtrTy(llvmcontext);
+        break;
+    }
+    case (TYPE_STRARR):
+    {
+        ret = PointerType::get(Type::getInt8PtrTy(llvmcontext), 0);
+        break;
+    }
     }
     return ret;
 }

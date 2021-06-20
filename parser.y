@@ -127,8 +127,8 @@ comparison:
 	;
 
 arraydecl: 
-	TGLOBAL TLBRACKET TINT TRBRACKET { $$ = new NArray($3, true); }
-	| TLBRACKET TINT TRBRACKET { $$ = new NArray($3, false); }
+	TGLOBAL TLBRACKET TINT TRBRACKET { $$ = new NArray(TYPE_INTARR, $3, true); }
+	| TLBRACKET TINT TRBRACKET { $$ = new NArray(TYPE_INTARR, $3, false); }
 	;
 
 arrayindex:

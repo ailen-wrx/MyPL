@@ -18,7 +18,8 @@ Value *NVariable::codeGen(CodeGenContext &context)
         cout << "Unknown variable name" << endl;
         return nullptr;
     }
-    if (context.getType(name) == TYPE_INTARR)
+    int type = context.getType(name);
+    if (type == TYPE_INTARR || type == TYPE_DOUBLEARR || type == TYPE_STRARR)
     {
         // Return pointer to the array.
         ArrayRef<Value *> indices{ConstantInt::get(Type::getInt32Ty(context.llvmcontext), 0, false)};
@@ -288,10 +289,11 @@ Value *NFuncDef::codeGen(CodeGenContext &context)
             a.setName(args[index]);
 
             Value *argAlloc;
-            if (context.getType(args[index]) == TYPE_INTARR)
+            int argType = context.getType(args[index]);
+            if (argType == TYPE_INTARR || argType == TYPE_DOUBLEARR || argType == TYPE_STRARR)
             {
                 // Allocate pointer for array argument.
-                argAlloc = context.builder.CreateAlloca(PointerType::getInt32PtrTy(context.llvmcontext));
+                argAlloc = context.builder.CreateAlloca(context.typeToLLVMType(argType));
             }
             else
                 argAlloc = context.builder.CreateAlloca(a.getType());

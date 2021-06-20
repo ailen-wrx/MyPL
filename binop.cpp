@@ -34,7 +34,7 @@ Value *binaryAssign(CodeGenContext &context, NExp *left, NExp *right)
             // Not found. `lvar` undefined.
             context.getCurrentBlock()->localVarTypes[lvar->name] = targetType;
 
-            if (targetType == TYPE_INTARR)
+            if (targetType == TYPE_INTARR || targetType == TYPE_DOUBLEARR || targetType == TYPE_STRARR)
             {
                 // Array declaration.
                 context.getCurrentBlock()->localVars[lvar->name] = rval;
@@ -63,19 +63,6 @@ Value *binaryAssign(CodeGenContext &context, NExp *left, NExp *right)
     {
         NArrayIndex *lvar = static_cast<NArrayIndex *>(left);
         NArray *targetArray = context.arrays[lvar->arrName];
-        if (targetArray)
-        {
-            if (targetArray->elementType == -1)
-            {
-                // First assignment. Type binding.
-                targetArray->type = targetType;
-            }
-            else if (targetArray->elementType != targetType)
-            {
-                cout << "Fail to match variables." << endl;
-                break;
-            }
-        }
 
         lvar->modify(context, rval);
         break;
